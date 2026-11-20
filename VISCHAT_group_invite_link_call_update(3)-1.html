@@ -1,0 +1,4859 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#050811">
+<title>VISCHAT</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,500,0,0" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+
+<style>
+*{
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent
+}
+
+html,body{
+margin:0;
+width:100%;
+height:100%;
+overflow:hidden;
+font-family:Inter,Roboto,Arial,sans-serif;
+background:#050811;
+color:#fff
+}
+
+body{
+background:
+radial-gradient(circle at 10% 10%,rgba(0,119,255,.18),transparent 30%),
+radial-gradient(circle at 90% 20%,rgba(120,40,255,.16),transparent 28%),
+radial-gradient(circle at 50% 100%,rgba(0,200,255,.10),transparent 35%),
+#050811
+}
+
+body:before,body:after{
+content:"";
+position:fixed;
+width:240px;
+height:240px;
+border-radius:50%;
+filter:blur(80px);
+pointer-events:none;
+opacity:.35;
+z-index:-1
+}
+
+body:before{
+background:#0077ff;
+left:-100px;
+top:20%
+}
+
+body:after{
+background:#7038ff;
+right:-100px;
+bottom:10%
+}
+
+button,input,textarea{font:inherit}
+button{border:0;color:#fff;cursor:pointer}
+.hidden{display:none!important}
+
+.glass{
+background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.045));
+border:1px solid rgba(255,255,255,.14);
+box-shadow:
+inset 0 1px 0 rgba(255,255,255,.17),
+inset 0 -1px 0 rgba(255,255,255,.035),
+0 18px 55px rgba(0,0,0,.32);
+backdrop-filter:blur(28px) saturate(170%);
+-webkit-backdrop-filter:blur(28px) saturate(170%)
+}
+
+.glass-btn{
+background:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.055));
+border:1px solid rgba(255,255,255,.16);
+box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 8px 25px rgba(0,0,0,.2);
+backdrop-filter:blur(20px);
+-webkit-backdrop-filter:blur(20px);
+transition:.18s
+}
+
+.glass-btn:active{transform:scale(.96)}
+
+.primary{
+background:linear-gradient(135deg,#168cff,#6c45ff);
+box-shadow:0 10px 30px rgba(31,121,255,.28),inset 0 1px 0 rgba(255,255,255,.3)
+}
+
+.danger{
+background:linear-gradient(135deg,#ff416c,#b51cff)
+}
+
+.icon{
+width:22px;
+height:22px;
+display:block;
+flex:none
+}
+
+.verified{
+width:18px;
+height:18px;
+display:inline-block;
+vertical-align:middle;
+margin-left:4px;
+filter:drop-shadow(0 0 5px rgba(21,139,255,.7))
+}
+
+.verified.big{
+width:24px;
+height:24px
+}
+
+/* AUTH */
+
+#authScreen{
+width:100%;
+height:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px
+}
+
+.auth-card{
+width:min(430px,100%);
+padding:30px 22px;
+border-radius:30px;
+position:relative;
+overflow:hidden
+}
+
+.auth-card:before{
+content:"";
+position:absolute;
+width:180px;
+height:180px;
+background:#158cff;
+filter:blur(80px);
+opacity:.18;
+right:-70px;
+top:-70px
+}
+
+.logo{
+width:68px;
+height:68px;
+border-radius:22px;
+margin:0 auto 18px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:25px;
+font-weight:900;
+background:linear-gradient(135deg,#168cff,#7445ff);
+box-shadow:0 15px 40px rgba(20,120,255,.3),inset 0 1px 0 rgba(255,255,255,.4)
+}
+
+.auth-title{
+text-align:center;
+font-size:28px;
+font-weight:900;
+letter-spacing:-1px
+}
+
+.auth-sub{
+text-align:center;
+color:#9ca8bb;
+margin:8px 0 25px;
+font-size:14px
+}
+
+.input{
+width:100%;
+height:54px;
+border-radius:17px;
+border:1px solid rgba(255,255,255,.12);
+outline:none;
+padding:0 16px;
+margin-bottom:12px;
+color:#fff;
+background:rgba(255,255,255,.065);
+box-shadow:inset 0 1px 0 rgba(255,255,255,.06)
+}
+
+.input:focus{
+border-color:rgba(40,145,255,.7);
+box-shadow:0 0 0 3px rgba(30,130,255,.1)
+}
+
+.auth-button{
+width:100%;
+height:54px;
+border-radius:17px;
+margin-top:6px;
+font-weight:800
+}
+
+.auth-switch{
+margin-top:20px;
+text-align:center;
+color:#9ca8bb;
+font-size:14px
+}
+
+.auth-switch span{
+color:#54a8ff;
+font-weight:800
+}
+
+/* MAIN */
+
+#mainScreen{
+width:100%;
+height:100%;
+position:relative
+}
+
+.topbar{
+height:72px;
+padding:max(10px,env(safe-area-inset-top)) 16px 8px;
+display:flex;
+align-items:flex-end;
+justify-content:space-between
+}
+
+.top-title{
+font-size:25px;
+font-weight:900;
+letter-spacing:-.8px
+}
+
+.top-actions{
+display:flex;
+gap:8px
+}
+
+.circle-btn{
+width:42px;
+height:42px;
+border-radius:15px;
+display:flex;
+align-items:center;
+justify-content:center
+}
+
+.pages{
+position:absolute;
+top:72px;
+left:0;
+right:0;
+bottom:82px;
+overflow:hidden
+}
+
+.page{
+width:100%;
+height:100%;
+overflow-y:auto;
+padding:12px 15px 25px;
+display:none
+}
+
+.page.active{display:block}
+
+.search{
+height:50px;
+border-radius:17px;
+display:flex;
+align-items:center;
+gap:10px;
+padding:0 15px;
+margin-bottom:13px
+}
+
+.search input{
+flex:1;
+background:none;
+border:0;
+outline:0;
+color:#fff;
+min-width:0
+}
+
+.search input::placeholder{color:#78859a}
+
+.list{
+display:flex;
+flex-direction:column;
+gap:9px
+}
+
+.list-item{
+min-height:72px;
+padding:10px;
+border-radius:21px;
+display:flex;
+align-items:center;
+gap:12px;
+position:relative;
+overflow:hidden
+}
+
+.list-item:active{transform:scale(.985)}
+
+.avatar{
+width:50px;
+height:50px;
+border-radius:17px;
+flex:none;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:18px;
+font-weight:900;
+background:linear-gradient(135deg,#168cff,#703cff);
+overflow:hidden
+}
+
+.avatar img{
+width:100%;
+height:100%;
+object-fit:cover
+}
+
+.item-info{
+min-width:0;
+flex:1
+}
+
+.item-name{
+font-size:15px;
+font-weight:800;
+display:flex;
+align-items:center;
+min-width:0
+}
+
+.item-name span:first-child{
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap
+}
+
+.item-sub{
+color:#8995a9;
+font-size:12px;
+margin-top:4px;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap
+}
+
+.item-time{
+color:#7f8ba0;
+font-size:10px
+}
+
+/* NAV */
+
+.bottom-nav{
+position:absolute;
+left:13px;
+right:13px;
+bottom:max(10px,env(safe-area-inset-bottom));
+height:67px;
+border-radius:24px;
+display:flex;
+align-items:center;
+justify-content:space-around;
+padding:5px;
+z-index:20
+}
+
+.nav-btn{
+flex:1;
+height:56px;
+border-radius:19px;
+background:transparent;
+color:#778398;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:3px;
+transition:.2s
+}
+
+.nav-btn.active{
+color:#fff;
+background:rgba(255,255,255,.10);
+box-shadow:inset 0 1px 0 rgba(255,255,255,.12)
+}
+
+.nav-label{
+font-size:9px;
+font-weight:700
+}
+
+/* PROFILE */
+
+.profile-head{
+padding:22px;
+border-radius:27px;
+text-align:center;
+margin-bottom:13px
+}
+
+.profile-avatar{
+width:90px;
+height:90px;
+margin:0 auto 13px;
+border-radius:28px;
+background:linear-gradient(135deg,#168cff,#7544ff);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+font-weight:900;
+overflow:hidden;
+box-shadow:0 15px 40px rgba(30,120,255,.25)
+}
+
+.profile-avatar img{
+width:100%;
+height:100%;
+object-fit:cover
+}
+
+.profile-name{
+font-size:21px;
+font-weight:900;
+display:flex;
+justify-content:center;
+align-items:center
+}
+
+.profile-user{
+color:#8490a4;
+font-size:13px;
+margin-top:4px
+}
+
+.profile-bio{
+color:#a6b0c0;
+margin-top:10px;
+font-size:13px
+}
+
+.menu{
+display:flex;
+flex-direction:column;
+gap:9px
+}
+
+.menu-item{
+min-height:65px;
+border-radius:21px;
+padding:11px 14px;
+display:flex;
+align-items:center;
+gap:13px
+}
+
+.menu-icon{
+width:43px;
+height:43px;
+border-radius:15px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:rgba(255,255,255,.08)
+}
+
+.menu-info{flex:1}
+.menu-title{font-weight:800;font-size:14px}
+.menu-sub{color:#7e899b;font-size:11px;margin-top:3px}
+
+.verified-card{
+margin-bottom:13px;
+padding:17px;
+border-radius:23px;
+display:flex;
+align-items:center;
+gap:13px
+}
+
+.verified-logo{
+width:52px;
+height:52px;
+border-radius:18px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:rgba(20,139,255,.12);
+border:1px solid rgba(30,145,255,.24)
+}
+
+.verified-text{flex:1}
+.verified-title{font-weight:900}
+.verified-desc{
+font-size:11px;
+color:#8591a5;
+margin-top:4px;
+line-height:1.4
+}
+
+.switch{
+width:50px;
+height:29px;
+border-radius:20px;
+background:rgba(255,255,255,.12);
+padding:3px;
+transition:.2s
+}
+
+.switch i{
+display:block;
+width:23px;
+height:23px;
+border-radius:50%;
+background:#aeb8c8;
+transition:.2s
+}
+
+.switch.on{background:#168cff}
+.switch.on i{
+transform:translateX(21px);
+background:#fff
+}
+
+/* CHAT */
+
+#chatView{
+position:absolute;
+inset:0;
+z-index:100;
+display:none;
+flex-direction:column;
+background:radial-gradient(circle at 15% 15%,rgba(0,125,255,.13),transparent 30%),#050811
+}
+
+.chat-head{
+height:72px;
+padding:max(8px,env(safe-area-inset-top)) 12px 7px;
+display:flex;
+align-items:flex-end;
+gap:9px;
+background:rgba(8,13,24,.72);
+border-bottom:1px solid rgba(255,255,255,.08);
+backdrop-filter:blur(25px)
+}
+
+.back-btn{
+width:42px;
+height:42px;
+border-radius:15px;
+display:flex;
+align-items:center;
+justify-content:center
+}
+
+.chat-user{
+min-width:0;
+flex:1
+}
+
+.chat-name{
+font-size:16px;
+font-weight:900;
+display:flex;
+align-items:center
+}
+
+.chat-status{
+font-size:10px;
+color:#8490a5;
+margin-top:3px
+}
+
+.chat-head-action{
+width:42px;
+height:42px;
+border-radius:15px;
+display:flex;
+align-items:center;
+justify-content:center
+}
+
+.messages{
+flex:1;
+overflow-y:auto;
+padding:16px 13px;
+display:flex;
+flex-direction:column;
+gap:7px
+}
+
+.msg{
+max-width:80%;
+padding:10px 12px;
+border-radius:17px;
+font-size:13px;
+line-height:1.4;
+word-wrap:break-word
+}
+
+.msg.me{
+align-self:flex-end;
+background:linear-gradient(135deg,#146fd2,#5e3dd5);
+border-bottom-right-radius:5px
+}
+
+.msg.other{
+align-self:flex-start;
+background:rgba(255,255,255,.08);
+border:1px solid rgba(255,255,255,.07);
+border-bottom-left-radius:5px
+}
+
+.msg-sender{
+font-size:10px;
+font-weight:800;
+color:#68b4ff;
+margin-bottom:4px;
+display:flex;
+align-items:center
+}
+
+'.msg-time{
+font-size:8px;
+opacity:.55;
+margin-top:4px;
+text-align:right
+}
+
+.voice-chat-message{
+min-width:210px;
+max-width:270px;
+padding:11px 12px 10px;
+border-radius:18px;
+background:rgba(255,255,255,.075);
+border:1px solid rgba(255,255,255,.12);
+box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
+}
+.msg.me .voice-chat-message{
+background:linear-gradient(135deg,rgba(20,111,210,.9),rgba(94,61,213,.9));
+border-color:rgba(255,255,255,.13)
+}
+.voice-chat-top{display:flex;align-items:center;gap:10px}
+.voice-chat-icon{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;flex:none;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.12)}
+.voice-chat-icon .material-symbols-rounded{font-size:22px}
+.voice-chat-info{min-width:0;flex:1}
+.voice-chat-title{font-size:13px;font-weight:900;line-height:1.2}
+.voice-chat-status{font-size:10px;color:#c7d2e6;margin-top:4px;line-height:1.25}
+.voice-chat-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}
+.voice-chat-direction{font-size:9px;font-weight:800;opacity:.75}
+.voice-chat-duration{font-size:9px;opacity:.7}
+
+.reply-preview{
+display:none;align-items:center;gap:9px;padding:8px 10px;background:rgba(8,13,24,.86);border-top:1px solid rgba(255,255,255,.08);backdrop-filter:blur(25px)
+}
+.reply-preview.show{display:flex}
+.reply-preview-bar{width:3px;height:38px;border-radius:9px;background:#168cff;flex:none}
+.reply-preview-body{min-width:0;flex:1}
+.reply-preview-title{font-size:10px;font-weight:850;color:#68b4ff;margin-bottom:2px}
+.reply-preview-text{font-size:11px;color:#d8deea;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reply-preview-close{width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+.msg-reply{margin-bottom:7px;padding:7px 9px;border-left:3px solid #168cff;border-radius:9px;background:rgba(0,0,0,.16);font-size:10px;line-height:1.3;overflow:hidden}
+.msg-reply-name{font-weight:850;color:#68b4ff;margin-bottom:2px}
+.msg-reply-text{color:#d5dbe6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg-action-row{display:none;gap:6px;margin-top:8px}
+.msg.show-msg-actions .msg-action-row{display:flex}
+.msg-action-btn{display:flex;align-items:center;gap:5px;padding:6px 8px;border-radius:10px;background:#ffffff12;border:1px solid #ffffff18;color:#fff;font-size:10px;font-weight:800}
+.msg-action-btn .material-symbols-rounded{font-size:17px}
+.chat-input{
+padding:8px 10px max(9px,env(safe-area-inset-bottom));
+display:flex;
+gap:8px;
+background:rgba(5,9,17,.8);
+backdrop-filter:blur(25px)
+}
+
+.chat-input input{
+flex:1;
+min-width:0;
+height:48px;
+border-radius:18px;
+border:1px solid rgba(255,255,255,.11);
+outline:0;
+background:rgba(255,255,255,.065);
+color:#fff;
+padding:0 15px
+}
+
+.send-btn{
+width:48px;
+height:48px;
+border-radius:18px;
+display:flex;
+align-items:center;
+justify-content:center
+}
+
+/* MODALS */
+
+.modal-layer{
+position:fixed;
+inset:0;
+z-index:5000;
+display:none;
+align-items:flex-end;
+justify-content:center;
+background:rgba(0,0,0,.48);
+backdrop-filter:blur(8px)
+}
+
+.modal-layer.show{display:flex}
+
+.modal{
+width:min(520px,100%);
+max-height:90vh;
+overflow-y:auto;
+border-radius:29px 29px 0 0;
+padding:18px 16px max(20px,env(safe-area-inset-bottom))
+}
+
+.modal-head{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:17px
+}
+
+.modal-title{
+font-size:19px;
+font-weight:900
+}
+
+.close-btn{
+width:38px;
+height:38px;
+border-radius:13px
+}
+
+/* GROUP */
+
+.group-cover{
+width:78px;
+height:78px;
+margin:0 auto 12px;
+border-radius:26px;
+background:linear-gradient(135deg,#168cff,#7544ff);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:27px;
+font-weight:900
+}
+
+.group-head-info{text-align:center}
+.group-head-name{
+font-size:20px;
+font-weight:900;
+display:flex;
+justify-content:center;
+align-items:center
+}
+
+.group-head-sub{
+color:#8290a5;
+font-size:12px;
+margin-top:4px
+}
+
+.group-info-actions{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:9px;
+margin:16px 0
+}
+
+.group-info-btn{
+height:48px;
+border-radius:16px;
+font-weight:800
+}
+
+.member-title{
+font-size:13px;
+font-weight:900;
+margin:16px 2px 9px
+}
+
+.member-row{
+display:flex;
+align-items:center;
+gap:11px;
+padding:10px;
+border-radius:18px;
+margin-bottom:7px
+}
+
+.member-row:active{
+transform:scale(.985)
+}
+
+.member-info{
+flex:1;
+min-width:0
+}
+
+.member-name{
+display:flex;
+align-items:center;
+font-size:13px;
+font-weight:800
+}
+
+.member-sub{
+font-size:10px;
+color:#8490a4;
+margin-top:3px
+}
+
+.role-badge{
+font-size:9px;
+font-weight:800;
+padding:4px 7px;
+border-radius:9px;
+background:rgba(22,140,255,.12);
+color:#55aaff;
+border:1px solid rgba(22,140,255,.2)
+}
+
+/* MEMBER ACTION SHEET */
+
+#memberActionLayer{
+z-index:8000
+}
+
+.member-action{
+padding:20px 16px max(22px,env(safe-area-inset-bottom));
+border-radius:30px 30px 0 0
+}
+
+.action-profile{
+display:flex;
+align-items:center;
+gap:12px;
+padding:5px 3px 17px
+}
+
+.action-profile .avatar{
+width:55px;
+height:55px
+}
+
+.action-profile-info{
+flex:1;
+min-width:0
+}
+
+.action-profile-name{
+display:flex;
+align-items:center;
+font-size:16px;
+font-weight:900
+}
+
+.action-profile-user{
+color:#8591a5;
+font-size:11px;
+margin-top:3px
+}
+
+.action-buttons{
+display:flex;
+flex-direction:column;
+gap:8px
+}
+
+.action-btn{
+width:100%;
+height:52px;
+border-radius:17px;
+display:flex;
+align-items:center;
+gap:12px;
+padding:0 16px;
+font-weight:800;
+text-align:left
+}
+
+.action-btn .action-icon{
+width:34px;
+height:34px;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:rgba(255,255,255,.08)
+}
+
+.action-cancel{
+justify-content:center;
+margin-top:4px
+}
+
+/* ACCOUNTS */
+
+.account-row{
+padding:11px;
+border-radius:20px;
+margin-bottom:8px;
+display:flex;
+align-items:center;
+gap:11px
+}
+
+.account-row.current{
+border-color:rgba(40,145,255,.5);
+background:rgba(20,130,255,.10)
+}
+
+.account-info{
+flex:1;
+min-width:0
+}
+
+.account-name{
+font-weight:800;
+display:flex;
+align-items:center
+}
+
+.account-user{
+color:#8490a3;
+font-size:11px;
+margin-top:3px
+}
+
+.account-delete{
+width:36px;
+height:36px;
+border-radius:12px
+}
+
+/* BLOCK */
+
+#blockOverlay{
+position:fixed;
+inset:0;
+z-index:999999;
+display:none;
+align-items:center;
+justify-content:center;
+padding:20px;
+background:radial-gradient(circle at 50% 35%,rgba(30,120,255,.13),transparent 32%),rgba(2,5,12,.92);
+backdrop-filter:blur(25px)
+}
+
+#blockOverlay.show{display:flex}
+
+.block-card{
+width:min(430px,100%);
+padding:27px 20px;
+border-radius:31px;
+text-align:center
+}
+
+.block-icon{
+width:78px;
+height:78px;
+margin:0 auto 18px;
+border-radius:26px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:rgba(255,60,90,.10);
+border:1px solid rgba(255,70,100,.25);
+box-shadow:0 0 45px rgba(255,40,80,.13)
+}
+
+.block-title{
+font-size:23px;
+font-weight:900
+}
+
+.block-text{
+color:#919caf;
+font-size:13px;
+line-height:1.5;
+margin:9px 0
+}
+
+.block-timer{
+font-size:28px;
+font-weight:900;
+letter-spacing:2px;
+margin:16px 0
+}
+
+.block-actions{
+display:grid;
+grid-template-columns:1fr;
+gap:9px
+}
+
+.block-actions button{
+min-height:50px;
+border-radius:17px;
+font-weight:800
+}
+
+/* LOADING */
+
+#loading{
+position:fixed;
+inset:0;
+z-index:10000000;
+display:none;
+align-items:center;
+justify-content:center;
+background:rgba(2,5,12,.72);
+backdrop-filter:blur(18px)
+}
+
+.loading-card{
+padding:22px 28px;
+border-radius:22px;
+text-align:center
+}
+
+.spinner{
+width:35px;
+height:35px;
+border-radius:50%;
+border:3px solid rgba(255,255,255,.15);
+border-top-color:#2b96ff;
+animation:spin .8s linear infinite;
+margin:0 auto 12px
+}
+
+@keyframes spin{
+to{transform:rotate(360deg)}
+}
+
+.empty{
+text-align:center;
+color:#788499;
+padding:55px 20px;
+font-size:13px
+}
+
+.empty strong{
+color:#cbd4e2;
+display:block;
+font-size:16px;
+margin-bottom:5px
+}
+
+body.app-locked .bottom-nav,
+body.app-locked .topbar{
+pointer-events:none
+}
+
+@media(max-width:380px){
+.top-title{font-size:22px}
+.page{padding-left:11px;padding-right:11px}
+.bottom-nav{left:8px;right:8px}
+}
+
+/* FRIEND PICKER */
+.friend-picker-list{
+display:flex;flex-direction:column;gap:9px;
+max-height:270px;overflow-y:auto;margin:12px 0
+}
+.friend-picker-row{
+display:flex;align-items:center;gap:11px;padding:10px;
+border-radius:17px;background:rgba(255,255,255,.055);
+border:1px solid rgba(255,255,255,.09);cursor:pointer
+}
+.friend-picker-row input{
+width:19px;height:19px;accent-color:#168cff;flex:none
+}
+.friend-picker-info{flex:1;min-width:0}
+.friend-picker-name{font-size:13px;font-weight:800}
+.friend-picker-user{font-size:11px;color:#8792a6;margin-top:4px}
+.friend-picker-empty{text-align:center;padding:24px 10px;color:#8792a6;font-size:12px}
+.friend-picker-heading{font-size:13px;font-weight:900;margin:13px 2px 5px}
+
+
+
+/* VISCHAT FEATURE UPDATE */
+#videoBackground{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;display:none;pointer-events:none;opacity:0;transition:opacity .28s ease;background:transparent} 
+#videoBackground.video-ready{opacity:.48}
+#mainScreen,#authScreen{position:relative;z-index:1;background:transparent}
+#chatView{background:rgba(5,8,17,.58)!important}
+body.video-bg-on{background:#050811!important}
+body[data-theme="white"]{color:#172033}
+body[data-theme="white"] .glass{background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(225,231,240,.82));border-color:rgba(20,35,55,.14);box-shadow:0 12px 35px rgba(20,35,55,.12)}
+body[data-theme="white"] .menu-title,body[data-theme="white"] .verified-title,body[data-theme="white"] .profile-name,body[data-theme="white"] .top-title{color:#172033}
+body[data-theme="white"] .menu-sub,body[data-theme="white"] .profile-user,body[data-theme="white"] .profile-bio,body[data-theme="white"] .verified-desc{color:#586579}
+body[data-theme="white"] .input,body[data-theme="white"] input,body[data-theme="white"] textarea{color:#172033}
+body.video-bg-on:before,body.video-bg-on:after{display:none}
+.theme-picker{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+.theme-swatch{width:39px;height:39px;border-radius:13px;border:2px solid rgba(255,255,255,.35);box-shadow:0 5px 15px #0005}
+.theme-swatch.selected{outline:2px solid white;outline-offset:2px}
+.story-card{display:flex;align-items:center;gap:12px;padding:12px;border-radius:19px;cursor:pointer}
+.story-ring{width:55px;height:55px;border-radius:50%;padding:3px;background:linear-gradient(135deg,#ffb52e,#e52d91,#7545ff);flex:none}
+.story-ring-inner{width:100%;height:100%;border-radius:50%;background:#101827;border:2px solid #0a1020;display:flex;align-items:center;justify-content:center;font-weight:900;overflow:hidden}
+.story-ring-inner img{width:100%;height:100%;object-fit:cover}
+.story-meta{min-width:0;flex:1}.story-name{font-weight:850;font-size:14px}.story-time{font-size:11px;color:#8995a8;margin-top:4px}
+.story-viewer{position:fixed;inset:0;z-index:1000002;background:#03060d;display:none;flex-direction:column;padding: max(12px,env(safe-area-inset-top)) 12px max(14px,env(safe-area-inset-bottom))}
+.story-viewer.show{display:flex}
+.story-progress{height:3px;background:#ffffff45;border-radius:9px;overflow:hidden;margin-bottom:14px}
+.story-progress span{display:block;height:100%;width:100%;background:#fff;transform-origin:left;animation:storyProgress 5s linear}
+@keyframes storyProgress{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.story-view-head{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.story-view-content{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;position:relative;border-radius:20px;overflow:hidden;background:#101522}
+.story-view-content img,.story-view-content video{width:100%;height:100%;object-fit:contain}
+.story-view-text{font-size:25px;font-weight:850;text-align:center;padding:25px;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere}
+.story-view-next{position:absolute;inset:0;display:flex;justify-content:flex-end;align-items:center}
+.story-view-next button{height:100%;width:22%;background:transparent}
+.msg-reactions{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.react-chip{font-size:12px;padding:4px 7px;border-radius:12px;background:#ffffff18;border:1px solid #ffffff18;color:white}
+.react-tools{display:flex;gap:5px;margin-top:7px;opacity:.92}
+.react-tools button{background:#ffffff12;border:1px solid #ffffff18;border-radius:10px;padding:4px 6px;font-size:13px}
+.add-friend-btn{margin-left:auto;flex:none;display:flex;align-items:center;gap:5px;padding:9px 11px;border-radius:13px;background:linear-gradient(135deg,#168cff,#6845e8);font-size:11px;font-weight:850;box-shadow:0 5px 16px #146fd244}
+.add-friend-btn .material-symbols-rounded{font-size:18px}
+.react-picker{display:none;align-items:center;gap:5px;padding:7px;margin-top:8px;border:1px solid #ffffff20;border-radius:15px;background:rgba(10,16,30,.96);width:max-content;max-width:100%;flex-wrap:wrap;box-shadow:0 8px 25px #0006}
+.msg.show-react-picker .react-picker{display:flex}
+.react-picker button{font-size:21px;line-height:1;background:transparent;padding:4px;border-radius:9px}
+.react-picker button:active{background:#ffffff25}
+.msg{touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.story-add-row{display:flex;gap:8px;align-items:center;margin-top:12px}
+.story-add-row .glass-btn{height:45px;border-radius:14px;padding:0 13px;flex:1}
+.video-bg-options{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.video-bg-option{min-width:0;min-height:82px;padding:11px;border-radius:15px;background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.14);color:#fff;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;text-align:left;box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+.video-bg-option .material-symbols-rounded{font-size:21px}
+.video-bg-option span:not(.material-symbols-rounded){font-size:14px;font-weight:850}
+.video-bg-option small{font-size:10px;color:#9da8ba}
+.video-bg-option.selected{border-color:#168cff;background:linear-gradient(135deg,rgba(22,140,255,.28),rgba(104,69,232,.18));box-shadow:0 7px 20px rgba(22,140,255,.18),inset 0 1px 0 rgba(255,255,255,.16)}
+
+
+/* VISCHAT REAL VOICE CALL - FULLSCREEN LIQUID GLASS */
+.voice-call-actions{display:flex;gap:7px;margin-left:auto}
+.voice-call-btn{width:39px;height:39px;border-radius:14px;display:grid;place-items:center;color:#fff;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.voice-call-layer{position:fixed;inset:0;z-index:1000020;display:none;align-items:stretch;justify-content:center;padding:0;background:radial-gradient(circle at 50% 32%,rgba(31,112,255,.28),transparent 36%),radial-gradient(circle at 85% 85%,rgba(124,55,255,.22),transparent 34%),rgba(3,7,18,.97);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px)}
+.voice-call-layer.show{display:flex}
+.voice-call-card{position:relative;isolation:isolate;overflow:hidden;width:100%;height:100%;min-height:100dvh;padding:max(58px,calc(env(safe-area-inset-top) + 35px)) 24px max(34px,calc(env(safe-area-inset-bottom) + 24px));border-radius:0;text-align:center;background:linear-gradient(160deg,rgba(22,42,78,.48),rgba(8,13,29,.72) 55%,rgba(30,17,62,.48));border:0;box-shadow:inset 0 1px 0 #ffffff16;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.voice-call-card:before,.voice-call-card:after{content:"";position:absolute;z-index:-1;width:260px;height:260px;border-radius:50%;filter:blur(65px);opacity:.28;pointer-events:none}
+.voice-call-card:before{background:#087cff;top:10%;left:-145px}.voice-call-card:after{background:#803cff;right:-145px;bottom:8%}
+.voice-call-kicker{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#93bfff;font-weight:900;margin-bottom:35px}
+.voice-call-avatar{width:132px;height:132px;flex:none;border-radius:50%;margin:0 auto 25px;display:grid;place-items:center;font-size:43px;font-weight:900;background:linear-gradient(135deg,#168cff,#8055ff);border:3px solid #ffffff55;box-shadow:0 0 0 12px #ffffff0b,0 0 65px #398cff66;animation:voicePulse 2s ease-in-out infinite}
+@keyframes voicePulse{0%,100%{box-shadow:0 0 0 10px #ffffff09,0 0 35px #398cff44}50%{box-shadow:0 0 0 19px #ffffff05,0 0 65px #398cff77}}
+.voice-call-name{font-size:29px;font-weight:900;color:#fff;letter-spacing:-.7px;max-width:90%;overflow-wrap:anywhere}.voice-call-status{font-size:14px;color:#c2cce0;margin:12px 0 0;min-height:22px}
+.voice-call-controls{display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;margin-top:auto;padding-top:48px;width:100%}
+.voice-call-control{min-width:76px;height:76px;padding:0 14px;border-radius:26px;color:#fff;background:rgba(255,255,255,.13);border:1px solid #ffffff28;font-weight:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.voice-call-control.end{background:linear-gradient(135deg,#ff405d,#c91d49);border:0;box-shadow:0 10px 30px #e3295055}.voice-call-control.accept{background:linear-gradient(135deg,#20c978,#0c9b69);border:0;box-shadow:0 10px 30px #12b87955}
+.voice-call-control .material-symbols-rounded{font-size:27px;display:block}
+.voice-call-control span:last-child{font-size:10px}
+#remoteCallAudio{display:none}
+
+/* VISCHAT VIDEO CALL - LIQUID GLASS + APP VIDEO BACKGROUND */
+.video-call-layer{position:fixed;inset:0;z-index:1000021;display:none;overflow:hidden;background:#050811}
+.video-call-layer.show{display:block}
+.video-call-bg{display:none!important}
+.video-call-shade{position:absolute;inset:0;z-index:1;background:radial-gradient(circle at 20% 10%,rgba(22,140,255,.10),transparent 32%),radial-gradient(circle at 85% 85%,rgba(112,60,255,.10),transparent 30%),#050811;pointer-events:none}
+.video-call-card{position:absolute;inset:0;z-index:2;padding:max(18px,calc(env(safe-area-inset-top) + 10px)) max(14px,calc(env(safe-area-inset-right) + 12px)) max(18px,calc(env(safe-area-inset-bottom) + 10px)) max(14px,calc(env(safe-area-inset-left) + 12px));display:flex;flex-direction:column;overflow:hidden;}
+.video-call-top{display:flex;align-items:center;gap:10px;min-height:58px;padding:8px 12px;border-radius:22px;background:rgba(8,15,30,.34);border:1px solid rgba(255,255,255,.14);box-shadow:0 12px 40px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.14);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.video-call-top-icon{width:39px;height:39px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(22,140,255,.72),rgba(128,85,255,.72));border:1px solid rgba(255,255,255,.22);box-shadow:0 8px 25px rgba(22,140,255,.22);flex:none}
+.video-call-top-icon .material-symbols-rounded{font-size:21px}
+.video-call-top-info{min-width:0;flex:1;text-align:left}
+.video-call-top-kicker{font-size:8px;letter-spacing:2px;text-transform:uppercase;color:#9fc8ff;font-weight:900}
+.video-call-top-name{font-size:15px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.video-call-top-status{font-size:10px;color:#d1d9e8;margin-top:2px}
+.video-call-remote-shell{position:relative;flex:1;min-height:0;margin:12px 0;border-radius:30px;overflow:hidden;background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.18);box-shadow:0 20px 70px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.14);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.video-call-remote{width:100%;height:100%;display:block;object-fit:cover;background:rgba(4,8,18,.25);opacity:.93}
+.video-call-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;background:linear-gradient(160deg,rgba(10,20,40,.35),rgba(24,11,45,.30));pointer-events:none}
+.video-call-placeholder-avatar{width:94px;height:94px;border-radius:50%;display:grid;place-items:center;font-size:34px;font-weight:900;background:linear-gradient(135deg,#168cff,#8055ff);border:2px solid rgba(255,255,255,.34);box-shadow:0 0 0 12px rgba(255,255,255,.055),0 0 55px rgba(57,140,255,.45);animation:videoPulse 2s ease-in-out infinite}
+.video-call-placeholder-text{font-size:12px;color:#d8e0ee;font-weight:800}
+.video-call-local{position:absolute;z-index:4;right:23px;bottom:112px;width:min(31vw,132px);height:min(43vw,182px);min-width:92px;min-height:122px;object-fit:cover;border-radius:22px;background:#0a1020;border:2px solid rgba(255,255,255,.55);box-shadow:0 14px 40px rgba(0,0,0,.45),0 0 0 5px rgba(255,255,255,.07);display:none}
+.video-call-local.show{display:block}
+.video-call-local.off{display:none}
+.video-call-controls{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;padding:11px;border-radius:27px;background:rgba(8,15,30,.44);border:1px solid rgba(255,255,255,.15);box-shadow:0 14px 45px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.13);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px)}
+.video-call-control{width:60px;height:60px;border-radius:20px;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:850;box-shadow:inset 0 1px 0 rgba(255,255,255,.10);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.video-call-control .material-symbols-rounded{font-size:23px}
+.video-call-control span:last-child{font-size:8px}
+.video-call-control.accept{background:linear-gradient(135deg,#20c978,#0c9b69);border:0;box-shadow:0 10px 28px rgba(18,184,121,.34)}
+.video-call-control.end{background:linear-gradient(135deg,#ff405d,#c91d49);border:0;box-shadow:0 10px 28px rgba(227,41,80,.36)}
+.video-call-control.active{background:linear-gradient(135deg,rgba(22,140,255,.92),rgba(104,69,232,.92));border-color:rgba(255,255,255,.28)}
+.video-call-hint{text-align:center;font-size:9px;color:#aeb9cb;margin-top:7px;text-shadow:0 2px 10px #000}
+@keyframes videoPulse{0%,100%{box-shadow:0 0 0 10px rgba(255,255,255,.045),0 0 35px rgba(57,140,255,.34)}50%{box-shadow:0 0 0 18px rgba(255,255,255,.025),0 0 62px rgba(57,140,255,.58)}}
+@media(max-height:620px){.video-call-top{min-height:48px}.video-call-top-icon{width:32px;height:32px;border-radius:11px}.video-call-local{bottom:96px;width:100px;height:132px}.video-call-controls{padding:8px}.video-call-control{width:52px;height:52px;border-radius:17px}.video-call-control .material-symbols-rounded{font-size:20px}.video-call-placeholder-avatar{width:70px;height:70px;font-size:27px}}
+@media(max-height:620px){.voice-call-kicker{margin-bottom:16px}.voice-call-avatar{width:92px;height:92px;margin-bottom:14px}.voice-call-controls{padding-top:20px}.voice-call-control{width:64px;height:64px;min-width:64px;border-radius:21px}}
+
+</style>
+</head>
+
+<body>
+<video id="videoBackground" autoplay muted loop playsinline></video>
+
+<!-- AUTH -->
+<div id="authScreen">
+<div class="auth-card glass">
+<div class="logo">V</div>
+<div class="auth-title">VISCHAT</div>
+<div class="auth-sub" id="authSub">Masuk ke akun kamu</div>
+
+<input id="authUsername" class="input" placeholder="Username" autocomplete="off">
+<input id="authPassword" class="input" type="password" placeholder="Password">
+
+<button id="authButton" class="auth-button primary" onclick="submitAuth()">Masuk</button>
+
+<div class="auth-switch" onclick="toggleAuthMode()">
+Belum punya akun?
+<span id="authSwitchText">Daftar</span>
+</div>
+</div>
+</div>
+
+
+<!-- MAIN -->
+<div id="mainScreen" class="hidden">
+
+<div class="topbar">
+<div class="top-title" id="pageTitle">Chats</div>
+
+<div class="top-actions">
+<button class="circle-btn glass-btn" onclick="openAccountModal()">
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.8"/>
+<circle cx="17" cy="10" r="2.2" stroke="currentColor" stroke-width="1.8"/>
+<path d="M3.5 19c.7-3.1 2.5-4.7 5.5-4.7s4.8 1.6 5.5 4.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+<path d="M14.5 16c2.9-.4 5 .8 6 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+</svg>
+</button>
+</div>
+</div>
+
+<div class="pages">
+
+<!-- CHATS -->
+<section id="pageChats" class="page active">
+
+<div class="search glass">
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.8"/>
+<path d="m16 16 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+</svg>
+
+<input id="searchInput" placeholder="Cari username..." oninput="searchUsers(this.value)">
+</div>
+
+<div id="chatList" class="list">
+<div class="empty">
+<strong>Belum ada chat</strong>
+Cari username untuk mulai chat.
+</div>
+</div>
+
+<div id="searchResults" class="list"></div>
+
+</section>
+
+
+<!-- STORIES -->
+<section id="pageStories" class="page">
+
+<div class="glass" style="padding:18px;border-radius:23px;margin-bottom:12px">
+
+<div style="font-weight:900;font-size:18px">Stories</div>
+
+<div style="color:#8792a6;font-size:12px;margin-top:5px">
+Cerita terbaru dari pengguna VISCHAT.
+</div>
+
+<button class="glass-btn primary"
+style="margin-top:14px;width:100%;height:48px;border-radius:16px"
+onclick="openStoryCreate()">＋ Tambah Story</button>
+
+</div>
+
+<div id="storyList" class="list"></div>
+
+</section>
+
+
+<!-- GRUP -->
+<section id="pageGroups" class="page">
+
+<button class="glass-btn primary"
+style="width:100%;height:52px;border-radius:18px;margin-bottom:13px;font-weight:800"
+onclick="openGroupCreateModal()">
++ Buat Grup
+</button>
+
+<div id="groupList" class="list"></div>
+
+</section>
+
+
+<!-- PROFILE -->
+<section id="pageProfile" class="page">
+
+<div class="profile-head glass">
+
+<div id="profileAvatar" class="profile-avatar">V</div>
+
+<div class="profile-name">
+<span id="profileName">VISCHAT</span>
+<span id="profileVerified"></span>
+</div>
+
+<div class="profile-user" id="profileUsername">@username</div>
+
+<div class="profile-bio" id="profileBio">Belum ada bio.</div>
+
+</div>
+
+<div class="verified-card glass" onclick="toggleVerified()">
+
+<div class="verified-logo">
+<svg class="verified big" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="10" fill="#168CFF"/>
+<path d="M7.2 12.3 10.3 15.2 16.8 8.7"
+fill="none" stroke="#fff" stroke-width="2.4"
+stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</div>
+
+<div class="verified-text">
+<div class="verified-title">Centang Biru</div>
+<div class="verified-desc">
+Aktifkan badge verifikasi VISCHAT yang tampil real-time di nama kamu.
+</div>
+</div>
+
+<div id="verifiedSwitch" class="switch"><i></i></div>
+
+</div>
+
+<div class="verified-card glass" style="margin-top:0">
+<div class="verified-logo"><span class="material-symbols-rounded" style="font-size:25px">movie</span></div>
+<div class="verified-text"><div class="verified-title">Video Background</div><div class="verified-desc">Pilih Video 1 atau Video 2 sebagai latar aplikasi</div></div>
+<div id="videoBgSwitch" class="switch" onclick="toggleVideoBackground()"><i></i></div>
+</div>
+<div class="menu-item glass" style="display:block;padding:14px 16px;margin-bottom:10px">
+<div style="font-weight:850">Pilih Video Background</div>
+<div class="menu-sub">Pilih video yang ingin dipakai sebagai background</div>
+<div class="video-bg-options">
+<button id="bgVideoOption1" class="video-bg-option" onclick="selectVideoBackground(1)"><span class="material-symbols-rounded">play_circle</span><span>Video 1</span><small>Background utama</small></button>
+<button id="bgVideoOption2" class="video-bg-option" onclick="selectVideoBackground(2)"><span class="material-symbols-rounded">play_circle</span><span>Video 2</span><small>Background kedua</small></button>
+</div>
+</div>
+<div class="menu-item glass" style="display:block;padding:14px 16px;margin-bottom:10px">
+<div style="font-weight:850">Ubah Warna Background</div>
+<div class="menu-sub">Pilih warna latar aplikasi</div>
+<div class="theme-picker">
+<button class="theme-swatch" style="background:#050811" title="Hitam" onclick="setAppTheme('black')"></button>
+<button class="theme-swatch" style="background:#f1f3f5" title="Putih" onclick="setAppTheme('white')"></button>
+<button class="theme-swatch" style="background:#1769e0" title="Biru" onclick="setAppTheme('blue')"></button>
+<button class="theme-swatch" style="background:#f2c400" title="Kuning" onclick="setAppTheme('yellow')"></button>
+<button class="theme-swatch" style="background:#159447" title="Hijau" onclick="setAppTheme('green')"></button>
+<button class="theme-swatch" style="background:#7b36c9" title="Ungu" onclick="setAppTheme('purple')"></button>
+<button class="theme-swatch" style="background:#e74444" title="Merah" onclick="setAppTheme('red')"></button>
+</div>
+</div>
+
+<div class="menu">
+
+<div class="menu-item glass" onclick="openEditProfile()">
+<div class="menu-icon">
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"
+stroke="currentColor" stroke-width="1.8"/>
+<path d="m13.5 6.5 4 4" stroke="currentColor" stroke-width="1.8"/>
+</svg>
+</div>
+
+<div class="menu-info">
+<div class="menu-title">Edit Profil</div>
+<div class="menu-sub">Ubah nama dan bio</div>
+</div>
+
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<path d="m9 5 7 7-7 7" stroke="currentColor"
+stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</div>
+
+<div class="menu-item glass" onclick="openAccountModal()">
+
+<div class="menu-icon">
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.8"/>
+<circle cx="17" cy="10" r="2" stroke="currentColor" stroke-width="1.8"/>
+<path d="M3 19c.7-3.2 2.7-4.8 6-4.8S14.3 15.8 15 19"
+stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+</svg>
+</div>
+
+<div class="menu-info">
+<div class="menu-title">Daftar Akun</div>
+<div class="menu-sub">Pindah akun tanpa login ulang</div>
+</div>
+
+</div>
+
+<div class="menu-item glass" onclick="logout()">
+
+<div class="menu-icon">
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5"
+stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+<path d="M14 8l4 4-4 4" stroke="currentColor"
+stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M9 12h9" stroke="currentColor"
+stroke-width="1.8" stroke-linecap="round"/>
+</svg>
+</div>
+
+<div class="menu-info">
+<div class="menu-title">Keluar</div>
+<div class="menu-sub">Keluar dari akun sekarang</div>
+</div>
+
+</div>
+
+</div>
+</section>
+
+</div>
+
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav glass">
+
+<button id="navChats" class="nav-btn active" onclick="showPage('chats')">
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H11l-5.5 4v-4.3A2.5 2.5 0 0 1 4 13.5v-8Z"
+stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+</svg>
+<span class="nav-label">Chats</span>
+</button>
+
+<button id="navStories" class="nav-btn" onclick="showPage('stories')">
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.8"/>
+<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+</svg>
+<span class="nav-label">Stories</span>
+</button>
+
+<button id="navGroups" class="nav-btn" onclick="showPage('groups')">
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.8"/>
+<circle cx="17" cy="9" r="2.3" stroke="currentColor" stroke-width="1.8"/>
+<path d="M3.5 19c.6-3.2 2.5-4.8 5.5-4.8s4.9 1.6 5.5 4.8"
+stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+<path d="M14.5 15.5c2.8-.2 4.9 1 5.7 3.5"
+stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+</svg>
+<span class="nav-label">Grup</span>
+</button>
+
+<button id="navProfile" class="nav-btn" onclick="showPage('profile')">
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8"/>
+<path d="M4.5 20c.8-4 3.2-6 7.5-6s6.7 2 7.5 6"
+stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+</svg>
+<span class="nav-label">Profil</span>
+</button>
+
+</div>
+</div>
+
+
+<!-- CHAT VIEW -->
+<div id="chatView">
+
+<div class="chat-head">
+
+<button class="back-btn glass-btn" onclick="closeChat()">
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<path d="m15 5-7 7 7 7" stroke="currentColor"
+stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</button>
+
+<div class="chat-user">
+
+<div class="chat-name" id="chatName">User</div>
+
+<div class="chat-status" id="chatStatus">online</div>
+
+</div>
+
+<button id="groupInfoBtn"
+class="chat-head-action glass-btn hidden"
+onclick="openGroupInfo()">
+
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+<path d="M12 10v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+<circle cx="12" cy="7" r="1" fill="currentColor"/>
+</svg>
+
+</button>
+
+<div class="voice-call-actions">
+<button class="voice-call-btn" onclick="startVoiceCall()" title="Voice Call"><span class="material-symbols-rounded">call</span></button>
+<button class="voice-call-btn" onclick="startVideoCall()" title="Video Call"><span class="material-symbols-rounded">videocam</span></button>
+</div>
+</div>
+
+<div id="messages" class="messages"></div>
+
+<div id="replyPreview" class="reply-preview">
+<div class="reply-preview-bar"></div>
+<div class="reply-preview-body">
+<div id="replyPreviewTitle" class="reply-preview-title">Membalas pesan</div>
+<div id="replyPreviewText" class="reply-preview-text"></div>
+</div>
+<button class="reply-preview-close glass-btn" onclick="cancelReply()" aria-label="Tutup balasan">
+<span class="material-symbols-rounded">close</span>
+</button>
+</div>
+
+<div class="chat-input">
+
+<input id="messageInput"
+placeholder="Tulis pesan..."
+autocomplete="off"
+onkeydown="if(event.key==='Enter')sendMessage()">
+
+<button class="send-btn primary" onclick="sendMessage()">
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<path d="m21 3-7.2 18-3.2-7.6L3 10.2 21 3Z"
+stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+<path d="M10.6 13.4 21 3" stroke="currentColor"
+stroke-width="1.8" stroke-linecap="round"/>
+</svg>
+</button>
+
+</div>
+</div>
+
+
+<!-- REAL VOICE CALL -->
+<audio id="remoteCallAudio" autoplay playsinline></audio>
+<div id="voiceCallLayer" class="voice-call-layer">
+ <div class="voice-call-card">
+  <div id="voiceCallKicker" class="voice-call-kicker">VISCHAT • VOICE CALL</div>
+  <div id="voiceCallAvatar" class="voice-call-avatar">V</div>
+  <div id="voiceCallName" class="voice-call-name">Voice Call</div>
+  <div id="voiceCallStatus" class="voice-call-status">Menghubungkan...</div>
+  <div class="voice-call-controls">
+   <button id="voiceMuteBtn" class="voice-call-control" onclick="toggleCallMute()"><span class="material-symbols-rounded">mic</span><span>Mute</span></button>
+   <button id="voiceAcceptBtn" class="voice-call-control accept" onclick="acceptVoiceCall()" style="display:none"><span class="material-symbols-rounded">call</span><span>Angkat</span></button>
+   <button id="voiceEndBtn" class="voice-call-control end" onclick="endVoiceCall()"><span class="material-symbols-rounded">call_end</span><span id="voiceEndLabel">Akhiri</span></button>
+  </div>
+ </div>
+</div>
+
+<!-- REAL VIDEO CALL -->
+<div id="videoCallLayer" class="video-call-layer">
+  <div class="video-call-shade"></div>
+ <div class="video-call-card">
+  <div class="video-call-top">
+   <div class="video-call-top-icon"><span class="material-symbols-rounded">videocam</span></div>
+   <div class="video-call-top-info">
+    <div id="videoCallKicker" class="video-call-top-kicker">VISCHAT • VIDEO CALL</div>
+    <div id="videoCallName" class="video-call-top-name">Video Call</div>
+    <div id="videoCallStatus" class="video-call-top-status">Menghubungkan...</div>
+   </div>
+  </div>
+  <div class="video-call-remote-shell">
+   <video id="videoCallRemote" class="video-call-remote" autoplay playsinline></video>
+   <div id="videoCallPlaceholder" class="video-call-placeholder">
+    <div id="videoCallPlaceholderAvatar" class="video-call-placeholder-avatar">V</div>
+    <div id="videoCallPlaceholderText" class="video-call-placeholder-text">Menunggu video...</div>
+   </div>
+   <video id="videoCallLocal" class="video-call-local" autoplay muted playsinline></video>
+  </div>
+  <div class="video-call-controls">
+   <button id="videoMuteBtn" class="video-call-control" onclick="toggleVideoCallMute()"><span class="material-symbols-rounded">mic</span><span>Mute</span></button>
+   <button id="videoCameraBtn" class="video-call-control" onclick="toggleVideoCamera()"><span class="material-symbols-rounded">videocam</span><span>Kamera</span></button>
+   <button id="videoSwitchBtn" class="video-call-control" onclick="switchVideoCamera()"><span class="material-symbols-rounded">flip_camera_ios</span><span>Balik</span></button>
+   <button id="videoAcceptBtn" class="video-call-control accept" onclick="acceptVideoCall()" style="display:none"><span class="material-symbols-rounded">call</span><span>Angkat</span></button>
+   <button id="videoEndBtn" class="video-call-control end" onclick="endVideoCall()"><span class="material-symbols-rounded">call_end</span><span id="videoEndLabel">Akhiri</span></button>
+  </div>
+  <div class="video-call-hint">Kamera & mikrofon terenkripsi peer-to-peer • VISCHAT</div>
+ </div>
+</div>
+
+<!-- STORY CREATE -->
+<div id="storyCreateModal" class="modal-layer" onclick="if(event.target===this)closeModal('storyCreateModal')">
+<div class="modal glass">
+<div class="modal-head"><div class="modal-title">Buat Story</div><button class="close-btn glass-btn" onclick="closeModal('storyCreateModal')">✕</button></div>
+<textarea id="storyTextInput" class="input" style="height:105px;padding:14px;resize:none" maxlength="500" placeholder="Tulis sesuatu untuk story..."></textarea>
+<div style="font-size:12px;color:#8995a8;margin:10px 2px">Tambahkan foto atau video (opsional)</div>
+<input id="storyMediaInput" type="file" accept="image/*,video/*" class="input" style="height:auto;padding:12px">
+<button class="glass-btn primary" style="width:100%;height:50px;border-radius:16px;margin-top:12px;font-weight:850" onclick="publishStory()">Bagikan Story</button>
+</div></div>
+<div id="storyViewer" class="story-viewer">
+<div class="story-progress"><span id="storyProgressBar"></span></div>
+<div class="story-view-head"><div id="storyViewerAvatar" class="story-ring-inner" style="width:38px;height:38px;border-radius:50%">V</div><div style="flex:1"><div id="storyViewerName" style="font-weight:850"></div><div id="storyViewerTime" style="font-size:11px;color:#9ba6b8"></div></div><button class="close-btn glass-btn" onclick="closeStoryViewer()">✕</button></div>
+<div id="storyViewerContent" class="story-view-content" onclick="if(event.clientX>innerWidth*.55)nextStory()"></div>
+<div style="text-align:center;color:#8d98aa;font-size:11px;padding:12px">Story akan hilang setelah 24 jam</div>
+</div>
+
+<!-- ACCOUNT MODAL -->
+<div id="accountModal" class="modal-layer" style="z-index:1000001"
+onclick="if(event.target===this)closeModal('accountModal')">
+
+<div class="modal glass">
+
+<div class="modal-head">
+<div class="modal-title">Daftar Akun</div>
+
+<button class="close-btn glass-btn"
+onclick="closeModal('accountModal')">✕</button>
+</div>
+
+<div id="accountList"></div>
+
+<button class="glass-btn primary"
+style="width:100%;height:51px;border-radius:17px;font-weight:800;margin-top:5px"
+onclick="createNewAccount()">
++ Buat Akun Baru
+</button>
+
+</div>
+</div>
+
+
+<!-- EDIT PROFILE -->
+<div id="editModal" class="modal-layer"
+onclick="if(event.target===this)closeModal('editModal')">
+
+<div class="modal glass">
+
+<div class="modal-head">
+<div class="modal-title">Edit Profil</div>
+
+<button class="close-btn glass-btn"
+onclick="closeModal('editModal')">✕</button>
+</div>
+
+<input id="editName" class="input" placeholder="Nama">
+
+<textarea id="editBio" class="input"
+style="height:100px;padding-top:15px;resize:none"
+placeholder="Bio"></textarea>
+
+<button class="glass-btn primary"
+style="width:100%;height:51px;border-radius:17px;font-weight:800"
+onclick="saveProfile()">
+Simpan Profil
+</button>
+
+</div>
+</div>
+
+
+<!-- CREATE GROUP -->
+<div id="groupCreateModal" class="modal-layer"
+onclick="if(event.target===this)closeModal('groupCreateModal')">
+
+<div class="modal glass">
+
+<div class="modal-head">
+<div class="modal-title">Buat Grup</div>
+
+<button class="close-btn glass-btn"
+onclick="closeModal('groupCreateModal')">✕</button>
+</div>
+
+<input id="groupName" class="input" placeholder="Nama grup">
+
+<div class="friend-picker-heading">Pilih teman untuk dimasukkan (opsional)</div>
+<div id="createFriendList" class="friend-picker-list">
+<div class="friend-picker-empty">Memuat teman...</div>
+</div>
+
+<div style="color:#8792a6;font-size:12px;margin:3px 3px 12px">
+Kamu otomatis menjadi owner grup.
+</div>
+
+<button class="glass-btn primary"
+style="width:100%;height:51px;border-radius:17px;font-weight:800"
+onclick="createGroup()">
+Buat Grup
+</button>
+
+</div>
+</div>
+
+
+<!-- ADD GROUP MEMBERS -->
+<div id="groupAddModal" class="modal-layer"
+onclick="if(event.target===this)closeModal('groupAddModal')">
+<div class="modal glass">
+<div class="modal-head">
+<div class="modal-title">Tambah Anggota</div>
+<button class="close-btn glass-btn" onclick="closeModal('groupAddModal')">✕</button>
+</div>
+<div style="color:#8792a6;font-size:12px;margin-bottom:8px">
+Pilih teman dari daftar chat kamu.
+</div>
+<div id="addFriendList" class="friend-picker-list">
+<div class="friend-picker-empty">Memuat teman...</div>
+</div>
+<button class="glass-btn primary"
+style="width:100%;height:51px;border-radius:17px;font-weight:800"
+onclick="confirmAddGroupMembers()">Tambahkan</button>
+</div>
+</div>
+
+<!-- GROUP INFO -->
+<div id="groupInfoModal" class="modal-layer"
+onclick="if(event.target===this)closeModal('groupInfoModal')">
+
+<div class="modal glass">
+
+<div class="modal-head">
+<div class="modal-title">Info Grup</div>
+
+<button class="close-btn glass-btn"
+onclick="closeModal('groupInfoModal')">✕</button>
+</div>
+
+<div id="groupInfoContent"></div>
+
+</div>
+</div>
+
+
+<!-- MEMBER ACTION -->
+<div id="memberActionLayer" class="modal-layer"
+onclick="if(event.target===this)closeMemberAction()">
+
+<div class="member-action glass">
+
+<div id="memberActionProfile" class="action-profile"></div>
+
+<div id="memberActionButtons" class="action-buttons"></div>
+
+<button class="action-btn glass-btn action-cancel"
+onclick="closeMemberAction()">
+Batal
+</button>
+
+</div>
+</div>
+
+
+<!-- BLOCK -->
+<div id="blockOverlay">
+
+<div class="block-card glass">
+
+<div class="block-icon">
+<svg class="icon" style="width:38px;height:38px"
+viewBox="0 0 24 24" fill="none">
+<path d="M12 3 21 7v5c0 5-3.3 8.4-9 10-5.7-1.6-9-5-9-10V7l9-4Z"
+stroke="#ff5472" stroke-width="1.7" stroke-linejoin="round"/>
+<path d="M9 12h6" stroke="#ff5472"
+stroke-width="2" stroke-linecap="round"/>
+</svg>
+</div>
+
+<div id="blockTitle" class="block-title">Akun Dibatasi</div>
+
+<div id="blockText" class="block-text">
+Aktivitas akun terdeteksi terlalu banyak.
+</div>
+
+<div id="blockTimer" class="block-timer">05:00:00</div>
+
+<div class="block-actions">
+
+<button id="reviewBtn" class="glass-btn primary" onclick="reviewBlock()">
+Tinjau
+</button>
+
+<button class="glass-btn" onclick="openAccountModal()">
+Ganti Akun
+</button>
+
+<button class="glass-btn" onclick="openRegisterFromBlock()">
++ Buat Akun Baru
+</button>
+
+</div>
+</div>
+</div>
+
+
+<!-- LOADING -->
+<div id="loading">
+
+<div class="loading-card glass">
+<div class="spinner"></div>
+<div id="loadingText">Loading...</div>
+</div>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+FIREBASE
+===================================================== */
+
+const firebaseConfig={
+apiKey:"AIzaSyCIzFTNzvR4ostyhezF0oHoJvczj3d61Z8",
+authDomain:"info-fcm-3afb9.firebaseapp.com",
+databaseURL:"https://info-fcm-3afb9-default-rtdb.asia-southeast1.firebasedatabase.app/",
+projectId:"info-fcm-3afb9",
+storageBucket:"info-fcm-3afb9.firebasestorage.app",
+messagingSenderId:"735743869979",
+appId:"1:735743869979:web:2f0ce1a7ab9e3b7552e4be",
+measurementId:"G-BFGVHPW0M6"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db=firebase.database();
+const storage=firebase.storage();
+
+
+/* =====================================================
+GLOBAL
+===================================================== */
+
+let currentUser=null;
+let currentChatUser=null;
+let currentChatId=null;
+
+let currentGroup=null;
+let currentGroupId=null;
+let replyTarget=null;
+
+let messageListener=null;
+let groupMessageListener=null;
+let groupListener=null;
+let verifiedListener=null;
+
+let registerMode=false;
+let blockTimerId=null;
+let appLocked=false;
+
+let selectedMember=null;
+
+const BLOCK_TIME=5*60*60*1000;
+const SPAM_LIMIT=8;
+const SPAM_WINDOW=5*60*1000;
+
+
+/* =====================================================
+UTIL
+===================================================== */
+
+function $(id){
+return document.getElementById(id);
+}
+
+function showLoading(text="Loading..."){
+$("loadingText").textContent=text;
+$("loading").style.display="flex";
+}
+
+function hideLoading(){
+$("loading").style.display="none";
+}
+
+function escapeHtml(str){
+return String(str??"")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+}
+
+function makeUid(){
+return "u_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,9);
+}
+
+function chatIdFor(a,b){
+return [a,b].sort().join("_");
+}
+
+function formatTime(ts){
+if(!ts)return"";
+return new Date(ts).toLocaleTimeString("id-ID",{
+hour:"2-digit",
+minute:"2-digit"
+});
+}
+
+function verifiedIcon(big=false){
+return `
+<svg class="verified ${big?"big":""}" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="10" fill="#168CFF"/>
+<path d="M7.2 12.3 10.3 15.2 16.8 8.7"
+fill="none" stroke="#fff" stroke-width="2.4"
+stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+}
+
+
+/* =====================================================
+HASH
+===================================================== */
+
+async function hashPassword(password){
+
+try{
+
+if(window.crypto&&crypto.subtle){
+
+const data=new TextEncoder().encode(password);
+
+const hash=await crypto.subtle.digest(
+"SHA-256",data
+);
+
+return Array.from(new Uint8Array(hash))
+.map(b=>b.toString(16).padStart(2,"0"))
+.join("");
+}
+
+}catch(e){}
+
+let h=0;
+
+for(let i=0;i<password.length;i++){
+h=((h<<5)-h)+password.charCodeAt(i);
+h|=0;
+}
+
+return String(h);
+}
+
+
+/* =====================================================
+AUTH
+===================================================== */
+
+function toggleAuthMode(){
+
+registerMode=!registerMode;
+
+$("authButton").textContent=
+registerMode?"Daftar":"Masuk";
+
+$("authSub").textContent=
+registerMode?"Buat akun VISCHAT baru":"Masuk ke akun kamu";
+
+$("authSwitchText").textContent=
+registerMode?"Masuk":"Daftar";
+}
+
+async function submitAuth(){
+
+const username=$("authUsername").value.trim().toLowerCase();
+const password=$("authPassword").value;
+
+if(username.length<3){
+alert("Username minimal 3 karakter.");
+return;
+}
+
+if(password.length<4){
+alert("Password minimal 4 karakter.");
+return;
+}
+
+showLoading(registerMode?"Membuat akun...":"Memeriksa akun...");
+
+try{
+
+if(registerMode){
+
+const usernameSnap=await db.ref("usernames/"+username).get();
+
+if(usernameSnap.exists()){
+hideLoading();
+alert("Username sudah digunakan.");
+return;
+}
+
+const uid=makeUid();
+const passwordHash=await hashPassword(password);
+
+const user={
+uid,
+username,
+name:username,
+bio:"",
+photo:"",
+passwordHash,
+verified:false,
+theme:"black",
+bgVideo:"",
+videoBgEnabled:false,
+createdAt:firebase.database.ServerValue.TIMESTAMP
+};
+
+await db.ref("users/"+uid).set(user);
+await db.ref("usernames/"+username).set(uid);
+
+currentUser=user;
+rememberAccount(currentUser,true);
+
+hideLoading();
+showMain();
+checkBlockState();
+
+}else{
+
+const usernameSnap=await db.ref("usernames/"+username).get();
+
+if(!usernameSnap.exists()){
+hideLoading();
+alert("Username tidak ditemukan.");
+return;
+}
+
+const uid=usernameSnap.val();
+
+const userSnap=await db.ref("users/"+uid).get();
+
+if(!userSnap.exists()){
+hideLoading();
+alert("Data akun tidak ditemukan.");
+return;
+}
+
+const user=userSnap.val();
+const hash=await hashPassword(password);
+
+if(hash!==user.passwordHash){
+hideLoading();
+alert("Password salah.");
+return;
+}
+
+currentUser=user;
+rememberAccount(currentUser,true);
+
+hideLoading();
+showMain();
+checkBlockState();
+
+}
+
+}catch(e){
+
+hideLoading();
+
+alert("Gagal terhubung Firebase.\n\n"+e.message);
+}
+}
+
+
+/* =====================================================
+ACCOUNT
+===================================================== */
+
+function getAccounts(){
+
+try{
+return JSON.parse(
+localStorage.getItem("vischat_accounts")||"[]"
+);
+}catch(e){
+return[];
+}
+}
+
+function saveAccounts(accounts){
+localStorage.setItem("vischat_accounts",JSON.stringify(accounts));
+}
+
+function getRemovedAccounts(){
+try{
+return JSON.parse(localStorage.getItem("vischat_removed_accounts")||"[]");
+}catch(e){
+return[];
+}
+}
+
+function saveRemovedAccounts(ids){
+localStorage.setItem("vischat_removed_accounts",JSON.stringify([...new Set(ids)]));
+}
+
+function rememberAccount(user,force=false){
+
+if(!user||!user.uid)return;
+
+let removed=getRemovedAccounts();
+if(removed.includes(user.uid)){
+if(!force)return;
+removed=removed.filter(id=>id!==user.uid);
+saveRemovedAccounts(removed);
+}
+
+let accounts=getAccounts();
+
+const clean={
+uid:user.uid,
+username:user.username,
+name:user.name||user.username,
+photo:user.photo||"",
+bio:user.bio||"",
+verified:user.verified===true,
+bgVideo:user.bgVideo||"",
+bgVideoChoice:Number(user.bgVideoChoice)===2?2:1,
+passwordHash:user.passwordHash
+};
+
+const index=accounts.findIndex(a=>a.uid===user.uid);
+
+if(index>=0)
+accounts[index]={...accounts[index],...clean};
+else
+accounts.push(clean);
+
+saveAccounts(accounts);
+
+localStorage.setItem("vischat_current",user.uid);
+}
+
+function openAccountModal(){
+renderAccounts();
+const modal=$("accountModal");
+modal.style.zIndex="1000001";
+modal.classList.add("show");
+}
+
+function renderAccounts(){
+
+const box=$("accountList");
+const accounts=getAccounts();
+
+if(!accounts.length){
+box.innerHTML=`
+<div class="empty">
+<strong>Belum ada akun</strong>
+</div>`;
+return;
+}
+
+box.innerHTML=accounts.map(acc=>{
+
+const isCurrent=currentUser&&currentUser.uid===acc.uid;
+
+return`
+<div class="account-row glass ${isCurrent?"current":""}">
+
+<div class="avatar">
+${acc.photo?
+`<img src="${escapeHtml(acc.photo)}">`:
+escapeHtml((acc.name||acc.username).charAt(0).toUpperCase())}
+</div>
+
+<div class="account-info" onclick="switchAccount('${acc.uid}')">
+
+<div class="account-name">
+<span>${escapeHtml(acc.name||acc.username)}</span>
+${acc.verified?verifiedIcon():""}
+</div>
+
+<div class="account-user">
+@${escapeHtml(acc.username)}
+${isCurrent?" · aktif":""}
+</div>
+
+</div>
+
+<button class="account-delete glass-btn"
+onclick="removeSavedAccount('${acc.uid}')">
+×
+</button>
+
+</div>`;
+}).join("");
+}
+
+function switchAccount(uid){
+
+const account=getAccounts().find(a=>a.uid===uid);
+
+if(!account)return;
+
+currentUser={...account};
+
+localStorage.setItem("vischat_current",uid);
+
+appLocked=false;
+document.body.classList.remove("app-locked");
+
+$("blockOverlay").classList.remove("show");
+
+closeChat();
+closeModal("accountModal");
+
+showMain();
+checkBlockState();
+}
+
+function removeSavedAccount(uid){
+
+let accounts=getAccounts().filter(a=>a.uid!==uid);
+saveAccounts(accounts);
+
+const removed=getRemovedAccounts();
+if(!removed.includes(uid)){
+removed.push(uid);
+saveRemovedAccounts(removed);
+}
+
+if(currentUser&&currentUser.uid===uid){
+
+localStorage.removeItem("vischat_current");
+currentUser=null;
+
+$("mainScreen").classList.add("hidden");
+$("authScreen").style.display="flex";
+}
+
+renderAccounts();
+}
+
+function createNewAccount(){
+closeModal("accountModal");
+openRegisterFromBlock();
+}
+
+
+/* =====================================================
+MAIN
+===================================================== */
+
+function showMain(){
+
+$("authScreen").style.display="none";
+$("mainScreen").classList.remove("hidden");
+
+loadProfile();
+loadChats();
+loadGroups();
+
+showPage("chats");
+listenMyVerified();
+listenForVoiceCalls();
+listenForVideoCalls();
+joinGroupFromInviteLink();
+}
+
+function showPage(page){
+
+if(appLocked)return;
+
+document.querySelectorAll(".page")
+.forEach(p=>p.classList.remove("active"));
+
+document.querySelectorAll(".nav-btn")
+.forEach(b=>b.classList.remove("active"));
+
+if(page==="chats"){
+
+$("pageChats").classList.add("active");
+$("navChats").classList.add("active");
+$("pageTitle").textContent="Chats";
+
+loadChats();
+}
+
+if(page==="stories"){
+
+loadStories();
+$("pageStories").classList.add("active");
+$("navStories").classList.add("active");
+$("pageTitle").textContent="Stories";
+}
+
+if(page==="groups"){
+
+$("pageGroups").classList.add("active");
+$("navGroups").classList.add("active");
+$("pageTitle").textContent="Grup";
+
+loadGroups();
+}
+
+if(page==="profile"){
+
+$("pageProfile").classList.add("active");
+$("navProfile").classList.add("active");
+$("pageTitle").textContent="Profil";
+
+loadProfile();
+}
+}
+
+
+/* =====================================================
+PROFILE
+===================================================== */
+
+async function loadProfile(){
+
+if(!currentUser)return;
+
+try{
+
+const snap=await db.ref("users/"+currentUser.uid).get();
+
+if(!snap.exists())return;
+
+currentUser={...currentUser,...snap.val()};
+
+rememberAccount(currentUser);
+
+const user=currentUser;
+applyUserAppearance(user);
+
+$("profileName").innerHTML=
+escapeHtml(user.name||user.username)+
+(user.verified?verifiedIcon():"");
+
+$("profileUsername").textContent="@"+user.username;
+$("profileBio").textContent=user.bio||"Belum ada bio.";
+
+$("profileVerified").innerHTML=
+user.verified?verifiedIcon():"";
+
+$("verifiedSwitch").classList.toggle(
+"on",user.verified===true
+);
+
+const av=$("profileAvatar");
+
+if(user.photo){
+av.innerHTML=`<img src="${escapeHtml(user.photo)}">`;
+}else{
+av.textContent=(user.name||user.username).charAt(0).toUpperCase();
+}
+
+}catch(e){
+console.log(e);
+}
+}
+
+function listenMyVerified(){
+
+if(!currentUser)return;
+
+if(verifiedListener){
+db.ref("users/"+currentUser.uid+"/verified")
+.off("value",verifiedListener);
+}
+
+verifiedListener=snap=>{
+
+const verified=snap.val()===true;
+
+currentUser.verified=verified;
+rememberAccount(currentUser);
+
+$("verifiedSwitch").classList.toggle("on",verified);
+$("profileVerified").innerHTML=verified?verifiedIcon():"";
+
+if($("profileName")){
+$("profileName").innerHTML=
+escapeHtml(currentUser.name||currentUser.username)+
+(verified?verifiedIcon():"");
+}
+
+if(currentChatUser&&currentChatUser.uid===currentUser.uid){
+updateChatHeader();
+}
+
+loadChats();
+loadGroups();
+};
+
+db.ref("users/"+currentUser.uid+"/verified")
+.on("value",verifiedListener);
+}
+
+async function toggleVerified(){
+
+if(!currentUser)return;
+
+const next=currentUser.verified!==true;
+
+try{
+
+await db.ref("users/"+currentUser.uid+"/verified").set(next);
+
+currentUser.verified=next;
+rememberAccount(currentUser);
+
+}catch(e){
+alert("Gagal mengubah centang biru.");
+}
+}
+
+function openEditProfile(){
+
+$("editName").value=currentUser?.name||"";
+$("editBio").value=currentUser?.bio||"";
+
+$("editModal").classList.add("show");
+}
+
+async function saveProfile(){
+
+if(!currentUser)return;
+
+const name=$("editName").value.trim();
+const bio=$("editBio").value.trim();
+
+if(name.length<1){
+alert("Nama tidak boleh kosong.");
+return;
+}
+
+await db.ref("users/"+currentUser.uid).update({
+name,bio
+});
+
+currentUser.name=name;
+currentUser.bio=bio;
+
+rememberAccount(currentUser);
+
+closeModal("editModal");
+
+loadProfile();
+loadChats();
+loadGroups();
+}
+
+
+
+/* =====================================================
+STORIES + PROFILE APPEARANCE
+===================================================== */
+let storyItems=[];
+let storyViewerIndex=0;
+let storyViewerTimer=null;
+const APP_THEMES={
+ black:{bg:"#050811",fg:"#ffffff",panel:"rgba(255,255,255,.08)"},
+ white:{bg:"#f1f3f5",fg:"#111827",panel:"rgba(0,0,0,.07)"},
+ blue:{bg:"#082b68",fg:"#ffffff",panel:"rgba(255,255,255,.10)"},
+ yellow:{bg:"#f2c400",fg:"#171717",panel:"rgba(0,0,0,.09)"},
+ green:{bg:"#073d26",fg:"#ffffff",panel:"rgba(255,255,255,.09)"},
+ purple:{bg:"#32105e",fg:"#ffffff",panel:"rgba(255,255,255,.09)"},
+ red:{bg:"#54131c",fg:"#ffffff",panel:"rgba(255,255,255,.09)"}
+};
+const DEFAULT_BG_VIDEO_URL="https://cdn.dbimg.app/qaNGBXqZ.mp4";
+const SECOND_BG_VIDEO_URL="https://cdn.dbimg.app/oWtGkMTM.mp4";
+function getBackgroundVideoUrl(user){
+return (user&&user.bgVideo) || DEFAULT_BG_VIDEO_URL;
+}
+function getBackgroundVideoChoice(user){
+if(user&&Number(user.bgVideoChoice)===2)return 2;
+return getBackgroundVideoUrl(user)===SECOND_BG_VIDEO_URL?2:1;
+}
+function updateBackgroundVideoOptions(user){
+const choice=getBackgroundVideoChoice(user);
+$("bgVideoOption1")?.classList.toggle("selected",choice===1);
+$("bgVideoOption2")?.classList.toggle("selected",choice===2);
+}
+function prepareBackgroundVideo(url){
+const vid=$("videoBackground");
+if(!vid)return;
+vid.classList.remove("video-ready");
+vid.style.display="block";
+vid.muted=true;vid.defaultMuted=true;vid.loop=true;vid.autoplay=true;vid.playsInline=true;
+vid.setAttribute("muted","");vid.setAttribute("playsinline","");vid.setAttribute("webkit-playsinline","");
+if(vid.dataset.source!==url){vid.pause();vid.dataset.source=url;vid.src=url;vid.load();}
+const reveal=()=>{if(!vid.paused&&vid.readyState>=2)vid.classList.add("video-ready");};
+if(vid.readyState>=2)reveal();
+const playPromise=vid.play();
+if(playPromise&&typeof playPromise.catch==="function")playPromise.then(reveal).catch(()=>{});
+}
+const backgroundVideoElement=$("videoBackground");
+backgroundVideoElement.addEventListener("loadeddata",()=>{if(!backgroundVideoElement.paused)backgroundVideoElement.classList.add("video-ready");});
+backgroundVideoElement.addEventListener("playing",()=>backgroundVideoElement.classList.add("video-ready"));
+backgroundVideoElement.addEventListener("error",()=>backgroundVideoElement.classList.remove("video-ready"));
+function applyUserAppearance(user){
+const theme=APP_THEMES[user.theme]||APP_THEMES.black;
+document.body.dataset.theme=APP_THEMES[user.theme]?user.theme:"black";
+document.documentElement.style.setProperty("--app-bg",theme.bg);
+document.documentElement.style.setProperty("--app-fg",theme.fg);
+document.body.style.background=`radial-gradient(circle at 10% 10%,${theme.bg} 0%,${theme.bg} 75%)`;
+document.body.style.color=theme.fg;
+document.querySelectorAll(".theme-swatch").forEach(b=>b.classList.remove("selected"));
+const vid=$("videoBackground");
+const bgVideoUrl=getBackgroundVideoUrl(user);
+if(user.videoBgEnabled){document.body.classList.add("video-bg-on");prepareBackgroundVideo(bgVideoUrl);}
+else{vid.classList.remove("video-ready");vid.pause();vid.style.display="none";document.body.classList.remove("video-bg-on");}
+$("videoBgSwitch")?.classList.toggle("on",user.videoBgEnabled===true);
+updateBackgroundVideoOptions(user);
+document.querySelectorAll(".theme-swatch").forEach(b=>{const label=(b.getAttribute("title")||"").toLowerCase();b.classList.toggle("selected",label===({black:"hitam",white:"putih",blue:"biru",yellow:"kuning",green:"hijau",purple:"ungu",red:"merah"}[user.theme]||"hitam"));});
+}
+async function setAppTheme(theme){
+if(!currentUser||!APP_THEMES[theme])return;
+try{await db.ref("users/"+currentUser.uid).update({theme});currentUser.theme=theme;rememberAccount(currentUser);applyUserAppearance(currentUser);}
+catch(e){alert("Gagal mengubah warna: "+e.message)}
+}
+async function toggleVideoBackground(){
+if(!currentUser)return;
+const enabled=currentUser.videoBgEnabled!==true;
+const choice=getBackgroundVideoChoice(currentUser);
+const selectedUrl=choice===2?SECOND_BG_VIDEO_URL:DEFAULT_BG_VIDEO_URL;
+if(enabled){
+currentUser.bgVideo=selectedUrl;
+currentUser.bgVideoChoice=choice;
+currentUser.videoBgEnabled=true;
+document.body.classList.add("video-bg-on");
+prepareBackgroundVideo(selectedUrl);
+}
+try{
+await db.ref("users/"+currentUser.uid).update({bgVideo:selectedUrl,bgVideoChoice:choice,videoBgEnabled:enabled});
+currentUser.bgVideo=selectedUrl;
+currentUser.bgVideoChoice=choice;
+currentUser.videoBgEnabled=enabled;
+rememberAccount(currentUser);
+applyUserAppearance(currentUser);
+}catch(e){
+currentUser.videoBgEnabled=!enabled;
+applyUserAppearance(currentUser);
+alert("Gagal mengubah video background.");
+}
+}
+async function selectVideoBackground(choice){
+if(!currentUser)return;
+const selectedUrl=Number(choice)===2?SECOND_BG_VIDEO_URL:DEFAULT_BG_VIDEO_URL;
+const wasEnabled=currentUser.videoBgEnabled===true;
+currentUser.bgVideo=selectedUrl;
+currentUser.bgVideoChoice=Number(choice)===2?2:1;
+updateBackgroundVideoOptions(currentUser);
+if(wasEnabled){
+document.body.classList.add("video-bg-on");
+prepareBackgroundVideo(selectedUrl);
+}
+try{
+await db.ref("users/"+currentUser.uid).update({bgVideo:selectedUrl,bgVideoChoice:currentUser.bgVideoChoice});
+rememberAccount(currentUser);
+if(wasEnabled)applyUserAppearance(currentUser);
+}catch(e){
+alert("Gagal memilih video background.");
+}
+}
+function openStoryCreate(){if(appLocked)return;$("storyTextInput").value="";$("storyMediaInput").value="";$("storyCreateModal").classList.add("show");}
+async function publishStory(){
+if(!currentUser||appLocked)return;
+const text=$("storyTextInput").value.trim();const file=$("storyMediaInput").files[0];
+if(!text&&!file){alert("Tulis teks atau pilih foto/video dulu.");return;}
+if(file&&file.size>(file.type.startsWith("video/")?40:12)*1024*1024){alert("Ukuran file terlalu besar.");return;}
+showLoading("Membagikan story...");
+try{
+let mediaUrl="",mediaType="";
+if(file){mediaType=file.type.startsWith("video/")?"video":"image";const ref=storage.ref(`stories/${currentUser.uid}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,"_")}`);await ref.put(file);mediaUrl=await ref.getDownloadURL();}
+await db.ref("stories/"+currentUser.uid).push({uid:currentUser.uid,text,mediaUrl,mediaType,createdAt:firebase.database.ServerValue.TIMESTAMP,expiresAt:Date.now()+86400000});
+hideLoading();closeModal("storyCreateModal");loadStories();
+}catch(e){hideLoading();alert("Gagal membagikan story: "+e.message)}
+}
+async function loadStories(){
+if(!currentUser)return;
+try{
+const friendsSnap=await db.ref("friends/"+currentUser.uid).get();const ids=new Set([currentUser.uid,...Object.keys(friendsSnap.val()||{})]);
+const result=[];
+for(const uid of ids){const snap=await db.ref("stories/"+uid).get();if(!snap.exists())continue;const userSnap=await db.ref("users/"+uid).get();const user=userSnap.val()||{uid,username:"user",name:"User"};Object.entries(snap.val()||{}).forEach(([key,item])=>{if(!item.expiresAt||item.expiresAt>Date.now())result.push({...item,key,user});});}
+result.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));storyItems=result;
+const box=$("storyList");if(!result.length){box.innerHTML='<div class="empty"><strong>Belum ada story</strong>Story teman akan muncul di sini.</div>';return;}
+const grouped={};result.forEach(item=>{(grouped[item.uid]??=[]).push(item)});
+box.innerHTML=Object.values(grouped).map(items=>{const item=items[items.length-1],u=item.user;const avatar=u.photo?`<img src="${escapeHtml(u.photo)}">`:escapeHtml((u.name||u.username||"V").charAt(0).toUpperCase());return `<div class="story-card glass" onclick="openStoryByUid('${item.uid}')"><div class="story-ring"><div class="story-ring-inner">${avatar}</div></div><div class="story-meta"><div class="story-name">${escapeHtml(u.name||u.username||"User")}${u.uid===currentUser.uid?" · Kamu":""}</div><div class="story-time">${items.length} story · ${formatTime(item.createdAt)}</div></div></div>`}).join("");
+}catch(e){$("storyList").innerHTML='<div class="empty">Gagal memuat story. Periksa koneksi atau Firebase Rules.</div>';}
+}
+function openStoryByUid(uid){const idx=storyItems.findIndex(x=>x.uid===uid);if(idx<0)return;storyViewerIndex=idx;showStoryAtIndex();}
+function showStoryAtIndex(){
+const item=storyItems[storyViewerIndex];if(!item){closeStoryViewer();return;}
+$("storyViewerName").textContent=item.user.name||item.user.username||"User";
+$("storyViewerTime").textContent=new Date(item.createdAt||Date.now()).toLocaleString("id-ID");
+const avatar=$("storyViewerAvatar");avatar.innerHTML=item.user.photo?`<img src="${escapeHtml(item.user.photo)}">`:escapeHtml((item.user.name||"V").charAt(0).toUpperCase());
+let content="";if(item.mediaType==="image"&&item.mediaUrl)content=`<img src="${escapeHtml(item.mediaUrl)}">`;else if(item.mediaType==="video"&&item.mediaUrl)content=`<video src="${escapeHtml(item.mediaUrl)}" autoplay playsinline controls></video>`;if(item.text)content+=`<div class="story-view-text" ${item.mediaUrl?'style="position:absolute;bottom:15px;left:0;right:0;text-shadow:0 2px 8px #000;background:linear-gradient(transparent,#0008)"':''}>${escapeHtml(item.text)}</div>`;
+$("storyViewerContent").innerHTML=content||'<div class="story-view-text">Story</div>';
+$("storyViewer").classList.add("show");const bar=$("storyProgressBar");bar.style.animation="none";void bar.offsetWidth;bar.style.animation="storyProgress 5s linear";
+if(storyViewerTimer)clearTimeout(storyViewerTimer);storyViewerTimer=setTimeout(nextStory,5000);
+}
+function nextStory(){if(storyViewerTimer)clearTimeout(storyViewerTimer);storyViewerIndex++;if(storyViewerIndex>=storyItems.length){closeStoryViewer();return;}showStoryAtIndex();}
+function closeStoryViewer(){if(storyViewerTimer)clearTimeout(storyViewerTimer);storyViewerTimer=null;$("storyViewer").classList.remove("show");$("storyViewerContent").innerHTML="";}
+
+/* =====================================================
+SEARCH / PRIVATE CHAT
+===================================================== */
+
+let searchTimer=null;
+
+function searchUsers(value){
+
+clearTimeout(searchTimer);
+
+const text=value.trim().toLowerCase();
+
+if(!text){
+$("searchResults").innerHTML="";
+return;
+}
+
+searchTimer=setTimeout(async()=>{
+
+const snap=await db.ref("users").once("value");
+const users=snap.val()||{};
+
+const results=Object.values(users)
+.filter(u=>
+u.uid!==currentUser.uid &&
+(
+String(u.username||"").toLowerCase().includes(text)||
+String(u.name||"").toLowerCase().includes(text)
+)
+)
+.slice(0,20);
+
+if(!results.length){
+
+$("searchResults").innerHTML=`
+<div class="empty">
+<strong>User tidak ditemukan</strong>
+</div>`;
+
+return;
+}
+
+$("searchResults").innerHTML=results.map(user=>`
+
+<div class="list-item glass"
+onclick='openChat(${JSON.stringify(user)})'>
+
+<div class="avatar">
+${user.photo?
+`<img src="${escapeHtml(user.photo)}">`:
+escapeHtml((user.name||user.username).charAt(0).toUpperCase())}
+</div>
+
+<div class="item-info">
+
+<div class="item-name">
+<span>${escapeHtml(user.name||user.username)}</span>
+${user.verified?verifiedIcon():""}
+</div>
+
+<div class="item-sub">
+@${escapeHtml(user.username)}
+</div>
+
+</div>
+<button class="add-friend-btn" onclick="event.stopPropagation();addFriend('${escapeHtml(user.uid)}')"><span class="material-symbols-rounded">person_add</span><span>Tambah teman</span></button>
+</div>
+
+`).join("");
+
+},250);
+}
+
+async function addFriend(uid){
+if(!currentUser||!uid||uid===currentUser.uid||appLocked)return;
+try{
+const snap=await db.ref("users/"+uid).get();
+if(!snap.exists()){alert("Akun tidak ditemukan.");return;}
+await db.ref("friends/"+currentUser.uid+"/"+uid).set(true);
+await db.ref("friends/"+uid+"/"+currentUser.uid).set(true);
+await loadChats();
+const btns=document.querySelectorAll('.add-friend-btn');
+btns.forEach(btn=>{if(btn.getAttribute('onclick')&&btn.getAttribute('onclick').includes("'"+uid+"'")){btn.innerHTML='<span class="material-symbols-rounded">check</span><span>Ditambahkan</span>';btn.disabled=true;btn.style.opacity='.7';}});
+}catch(e){alert("Gagal menambahkan teman: "+e.message);}
+}
+
+async function loadChats(){
+
+if(!currentUser)return;
+
+const friendsSnap=await db.ref("friends/"+currentUser.uid).get();
+const friends=friendsSnap.val()||{};
+const ids=Object.keys(friends);
+
+if(!ids.length){
+
+$("chatList").innerHTML=`
+<div class="empty">
+<strong>Belum ada chat</strong>
+Cari username untuk memulai percakapan.
+</div>`;
+
+return;
+}
+
+const users=[];
+
+for(const uid of ids){
+
+const snap=await db.ref("users/"+uid).get();
+
+if(snap.exists())
+users.push(snap.val());
+}
+
+$("chatList").innerHTML=users.map(user=>`
+
+<div class="list-item glass"
+onclick='openChat(${JSON.stringify(user)})'>
+
+<div class="avatar">
+${user.photo?
+`<img src="${escapeHtml(user.photo)}">`:
+escapeHtml((user.name||user.username).charAt(0).toUpperCase())}
+</div>
+
+<div class="item-info">
+
+<div class="item-name">
+<span>${escapeHtml(user.name||user.username)}</span>
+${user.verified?verifiedIcon():""}
+</div>
+
+<div class="item-sub">
+@${escapeHtml(user.username)}
+</div>
+
+</div>
+</div>
+
+`).join("");
+}
+
+
+/* =====================================================
+PRIVATE CHAT
+===================================================== */
+
+async function openChat(user){
+
+if(appLocked)return;
+
+currentChatUser=user;
+currentGroup=null;
+currentGroupId=null;
+
+currentChatId=chatIdFor(currentUser.uid,user.uid);
+
+await db.ref(
+"friends/"+currentUser.uid+"/"+user.uid
+).set(true);
+
+await db.ref(
+"friends/"+user.uid+"/"+currentUser.uid
+).set(true);
+
+$("chatView").style.display="flex";
+$("groupInfoBtn").classList.add("hidden");
+
+updateChatHeader();
+listenMessages();
+}
+
+function updateChatHeader(){
+
+if(!currentChatUser)return;
+
+$("chatName").innerHTML=
+escapeHtml(currentChatUser.name||currentChatUser.username)+
+(currentChatUser.verified?verifiedIcon():"");
+
+$("chatStatus").textContent=
+currentChatUser.verified
+?"Verified VISCHAT"
+:"@"+currentChatUser.username;
+}
+
+function closeChat(){
+
+if(messageListener&&currentChatId){
+db.ref("messages/"+currentChatId)
+.off("value",messageListener);
+}
+
+if(groupMessageListener&&currentGroupId){
+db.ref("groupMessages/"+currentGroupId)
+.off("value",groupMessageListener);
+}
+
+messageListener=null;
+groupMessageListener=null;
+
+currentChatId=null;
+currentChatUser=null;
+currentGroup=null;
+cancelReply();
+currentGroupId=null;
+
+$("groupInfoBtn").classList.add("hidden");
+$("chatView").style.display="none";
+}
+
+
+function replyHtml(reply){
+if(!reply||!reply.text)return "";
+const name=reply.sender===currentUser?.uid?"Kamu":(reply.senderName||"Pesan");
+return `<div class="msg-reply"><div class="msg-reply-name">${escapeHtml(name)}</div><div class="msg-reply-text">${escapeHtml(reply.text)}</div></div>`;
+}
+
+function reactionHtml(messageKey,reactions){
+const items=Object.entries(reactions||{});
+const counts={};items.forEach(([uid,r])=>{if(r&&r.emoji)counts[r.emoji]=(counts[r.emoji]||0)+1});
+const chips=Object.entries(counts).map(([emoji,count])=>`<span class="react-chip">${emoji} ${count}</span>`).join("");
+const choices=["❤️","😂","😮","😢","👍","🔥","🥰","👏","🎉","🙏"];
+return `<div class="msg-reactions">${chips}</div><div class="msg-action-row"><button type="button" class="msg-action-btn" onclick="event.stopPropagation();replyFromMessage(this.closest('.msg'))"><span class="material-symbols-rounded">reply</span>Balas</button><button type="button" class="msg-action-btn" onclick="event.stopPropagation();showReactionPicker(this.closest('.msg'))"><span class="material-symbols-rounded">add_reaction</span>Reaction</button></div><div class="react-picker">${choices.map(e=>`<button type="button" onclick="event.stopPropagation();setMessageReaction('${messageKey}','${e}')">${e}</button>`).join("")}</div>`;
+}
+
+function showReactionPicker(node){
+if(!node)return;
+document.querySelectorAll('#messages .msg.show-msg-actions,#messages .msg.show-react-picker').forEach(el=>{if(el!==node){el.classList.remove('show-msg-actions');el.classList.remove('show-react-picker')}});
+node.classList.remove('show-msg-actions');
+node.classList.add('show-react-picker');
+}
+
+function replyFromMessage(node){
+if(!node)return;
+const key=node.dataset.messageKey||"";
+const text=node.dataset.messageText||"";
+const sender=node.dataset.messageSender||"";
+const senderName=node.dataset.messageSenderName||"";
+if(!key||!text)return;
+replyTarget={key,text,sender,senderName};
+$("replyPreviewTitle").textContent=sender===currentUser?.uid?"Membalas pesan kamu":"Membalas "+(senderName||"pesan");
+$("replyPreviewText").textContent=text;
+$("replyPreview").classList.add("show");
+$("messageInput").focus();
+document.querySelectorAll('#messages .msg.show-msg-actions,#messages .msg.show-react-picker').forEach(el=>{el.classList.remove('show-msg-actions');el.classList.remove('show-react-picker')});
+}
+
+function cancelReply(){
+replyTarget=null;
+$("replyPreview").classList.remove("show");
+}
+
+function scrollToMessage(key){
+const node=Array.from(document.querySelectorAll('#messages .msg')).find(el=>el.dataset.messageKey===key);
+if(!node)return;
+node.scrollIntoView({behavior:"smooth",block:"center"});
+node.animate([{transform:"scale(1)"},{transform:"scale(1.03)"},{transform:"scale(1)"}],{duration:420});
+}
+
+function bindMessageGestures(){
+const nodes=document.querySelectorAll('#messages .msg');
+nodes.forEach(node=>{
+let holdTimer=null;
+let startX=0,startY=0,moved=false,dragging=false;
+const show=()=>{
+if(moved)return;
+document.querySelectorAll('#messages .msg.show-msg-actions,#messages .msg.show-react-picker').forEach(el=>{if(el!==node){el.classList.remove('show-msg-actions');el.classList.remove('show-react-picker')}});
+node.classList.add('show-msg-actions');
+};
+node.addEventListener('pointerdown',ev=>{
+startX=ev.clientX;startY=ev.clientY;moved=false;dragging=false;
+if(holdTimer)clearTimeout(holdTimer);
+holdTimer=setTimeout(show,480);
+});
+node.addEventListener('pointermove',ev=>{
+const dx=ev.clientX-startX,dy=ev.clientY-startY;
+if(Math.abs(dx)>8&&Math.abs(dx)>Math.abs(dy)){
+if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}
+moved=true;dragging=true;
+const shift=Math.max(-78,Math.min(78,dx));
+node.style.transform=`translateX(${shift}px)`;
+}
+});
+node.addEventListener('pointerup',ev=>{
+if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}
+const dx=ev.clientX-startX;
+if(dragging&&Math.abs(dx)>=58){
+node.style.transform="";
+replyFromMessage(node);
+}else{
+node.style.transform="";
+}
+});
+['pointerleave','pointercancel'].forEach(ev=>node.addEventListener(ev,()=>{if(holdTimer){clearTimeout(holdTimer);holdTimer=null;}node.style.transform="";}));
+node.addEventListener('contextmenu',ev=>{ev.preventDefault();show();});
+});
+}
+
+async function setMessageReaction(messageKey,emoji){
+if(!currentUser||appLocked)return;
+const path=currentGroupId?`groupMessages/${currentGroupId}/${messageKey}/reactions/${currentUser.uid}`:`messages/${currentChatId}/${messageKey}/reactions/${currentUser.uid}`;
+try{const ref=db.ref(path);const snap=await ref.get();if(snap.exists()&&snap.val().emoji===emoji)await ref.remove();else await ref.set({emoji,createdAt:firebase.database.ServerValue.TIMESTAMP});}catch(e){alert("Gagal mengirim reaction: "+e.message)}
+}
+
+function voiceCallMessageLabel(status){
+ if(status==="ringing")return "Memanggil...";
+ if(status==="answered")return "Panggilan terhubung";
+ if(status==="declined")return "Panggilan ditolak";
+ if(status==="missed")return "Panggilan tak terjawab";
+ return "Panggilan berakhir";
+}
+function videoCallMessageLabel(status){
+ if(status==="ringing")return "Memanggil video...";
+ if(status==="answered")return "Video call terhubung";
+ if(status==="declined")return "Video call ditolak";
+ if(status==="missed")return "Video call tak terjawab";
+ return "Video call berakhir";
+}
+function videoCallHtml(m){
+ const status=m.callStatus||"ended";
+ const icon=status==="missed"||status==="declined"?"videocam_off":"videocam";
+ const duration=Number(m.callDuration||0);
+ const durationText=duration>0?`${Math.floor(duration/60)}:${String(duration%60).padStart(2,"0")}`:"";
+ return `<div class="voice-chat-message">
+ <div class="voice-chat-top">
+  <div class="voice-chat-icon"><span class="material-symbols-rounded">${icon}</span></div>
+  <div class="voice-chat-info">
+   <div class="voice-chat-title">Video call</div>
+   <div class="voice-chat-status">${videoCallMessageLabel(status)}</div>
+  </div>
+ </div>
+ <div class="voice-chat-meta">
+  <span class="voice-chat-direction">${voiceCallMessageDirection(m)}</span>
+  <span class="voice-chat-duration">${durationText}</span>
+ </div>
+ </div>`;
+}
+async function createVideoCallMessage(){
+ if(!currentUser||!currentChatUser)return null;
+ try{
+  const chatId=chatIdFor(currentUser.uid,currentChatUser.uid);
+  const ref=db.ref("messages/"+chatId).push();
+  await ref.set({sender:currentUser.uid,text:"Video call",type:"videoCall",callStatus:"ringing",createdAt:firebase.database.ServerValue.TIMESTAMP});
+  videoChatMessageId=ref.key;
+  videoChatId=chatId;
+  return ref.key;
+ }catch(e){
+  console.warn("Video call chat message",e);
+  return null;
+ }
+}
+async function updateVideoCallMessage(status,duration){
+ const chatId=videoChatId||((currentChatUser&&currentUser)?chatIdFor(currentUser.uid,currentChatUser.uid):(videoIncomingData?chatIdFor(videoIncomingData.caller,videoIncomingData.callee):null));
+ const key=videoChatMessageId||(videoIncomingData&&videoIncomingData.chatMessageId);
+ if(!chatId||!key)return;
+ const data={type:"videoCall",callStatus:status};
+ if(Number(duration)>0)data.callDuration=Math.floor(Number(duration));
+ try{await db.ref("messages/"+chatId+"/"+key).update(data);}catch(e){console.warn("Update video call message",e);}
+}
+function voiceCallMessageDirection(m){
+ return m.sender===currentUser?.uid?"Panggilan keluar":"Panggilan masuk";
+}
+function voiceCallHtml(m){
+ const status=m.callStatus||"ended";
+ const icon=status==="missed"||status==="declined"?"call_missed":"call";
+ const title=status==="answered"?"Panggilan suara":"Panggilan suara";
+ const duration=Number(m.callDuration||0);
+ const durationText=duration>0?`${Math.floor(duration/60)}:${String(duration%60).padStart(2,"0")}`:"";
+ const text=voiceCallMessageLabel(status);
+ return `<div class="voice-chat-message">
+ <div class="voice-chat-top">
+  <div class="voice-chat-icon"><span class="material-symbols-rounded">${icon}</span></div>
+  <div class="voice-chat-info">
+   <div class="voice-chat-title">${title}</div>
+   <div class="voice-chat-status">${text}</div>
+  </div>
+ </div>
+ <div class="voice-chat-meta">
+  <span class="voice-chat-direction">${voiceCallMessageDirection(m)}</span>
+  <span class="voice-chat-duration">${durationText}</span>
+ </div>
+ </div>`;
+}
+async function createVoiceCallMessage(){
+ if(!currentUser||!currentChatUser)return null;
+ try{
+  const ref=db.ref("messages/"+chatIdFor(currentUser.uid,currentChatUser.uid)).push();
+  await ref.set({sender:currentUser.uid,text:"Panggilan suara",type:"voiceCall",callStatus:"ringing",createdAt:firebase.database.ServerValue.TIMESTAMP});
+  voiceChatMessageId=ref.key;
+  voiceChatId=chatIdFor(currentUser.uid,currentChatUser.uid);
+  return ref.key;
+ }catch(e){
+  console.warn("Voice call chat message",e);
+  return null;
+ }
+}
+async function updateVoiceCallMessage(status,duration){
+ const chatId=voiceChatId||((currentChatUser&&currentUser)?chatIdFor(currentUser.uid,currentChatUser.uid):(voiceIncomingData?chatIdFor(voiceIncomingData.caller,voiceIncomingData.callee):null));
+ const key=voiceChatMessageId||(voiceIncomingData&&voiceIncomingData.chatMessageId);
+ if(!chatId||!key)return;
+ const data={type:"voiceCall",callStatus:status};
+ if(Number(duration)>0)data.callDuration=Math.floor(Number(duration));
+ try{await db.ref("messages/"+chatId+"/"+key).update(data);}catch(e){console.warn("Update voice call message",e);}
+}
+
+function listenMessages(){
+
+const ref=db.ref("messages/"+currentChatId).limitToLast(100);
+
+if(messageListener)
+ref.off("value",messageListener);
+
+messageListener=snap=>{
+
+const data=snap.val()||{};
+
+const messages=Object.entries(data)
+.map(([key,val])=>({key,...val}))
+.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+
+$("messages").innerHTML=messages.map(m=>`
+
+<div class="msg ${m.sender===currentUser.uid?"me":"other"}" data-message-key="${escapeHtml(m.key)}" data-message-text="${escapeHtml(m.type==="voiceCall"?voiceCallMessageLabel(m.callStatus):m.type==="videoCall"?videoCallMessageLabel(m.callStatus):m.text||"")}" data-message-sender="${escapeHtml(m.sender||"")}" data-message-sender-name="${escapeHtml(m.sender===currentUser.uid?"Kamu":(currentChatUser?.name||currentChatUser?.username||"User"))}">
+
+${m.type==="voiceCall"?voiceCallHtml(m):m.type==="videoCall"?videoCallHtml(m):`${replyHtml(m.replyTo)}${escapeHtml(m.text||"")}`}
+<div class="msg-time">${formatTime(m.createdAt)}</div>
+${m.type==="voiceCall"||m.type==="videoCall"?"":reactionHtml(m.key,m.reactions)}
+
+</div>
+
+`).join("");
+bindMessageGestures();
+
+$("messages").scrollTop=$("messages").scrollHeight;
+};
+
+ref.on("value",messageListener);
+}
+
+
+/* =====================================================
+GROUP CREATE
+===================================================== */
+
+let selectedCreateFriends={};
+let selectedAddFriends={};
+
+async function getMyFriends(){
+if(!currentUser)return [];
+const snap=await db.ref("friends/"+currentUser.uid).get();
+const ids=Object.keys(snap.val()||{});
+const users=[];
+for(const uid of ids){
+const userSnap=await db.ref("users/"+uid).get();
+if(userSnap.exists())users.push(userSnap.val());
+}
+return users;
+}
+
+function friendPickerRow(user,checked,mode){
+const name=user.name||user.username||"User";
+const photo=user.photo
+?`<img src="${escapeHtml(user.photo)}">`
+:escapeHtml(name.charAt(0).toUpperCase());
+return `<label class="friend-picker-row">
+<input type="checkbox" value="${escapeHtml(user.uid)}" ${checked?"checked":""}
+onchange="setPickedFriend('${escapeHtml(user.uid)}','${mode}',this.checked)">
+<div class="avatar">${photo}</div>
+<div class="friend-picker-info">
+<div class="friend-picker-name">${escapeHtml(name)}${user.verified?verifiedIcon():""}</div>
+<div class="friend-picker-user">@${escapeHtml(user.username||"")}</div>
+</div>
+</label>`;
+}
+
+function setPickedFriend(uid,mode,checked){
+const selected=mode==="create"?selectedCreateFriends:selectedAddFriends;
+selected[uid]=checked;
+}
+
+async function renderCreateFriendList(){
+const box=$("createFriendList");
+if(!box)return;
+box.innerHTML='<div class="friend-picker-empty">Memuat teman...</div>';
+try{
+const friends=await getMyFriends();
+if(!friends.length){
+box.innerHTML='<div class="friend-picker-empty">Belum ada teman. Cari username dan mulai chat terlebih dahulu.</div>';
+return;
+}
+box.innerHTML=friends.map(u=>friendPickerRow(u,selectedCreateFriends[u.uid]===true,"create")).join("");
+}catch(e){
+box.innerHTML='<div class="friend-picker-empty">Gagal memuat teman: '+escapeHtml(e.message)+'</div>';
+}
+}
+
+async function openGroupCreateModal(){
+$("groupName").value="";
+selectedCreateFriends={};
+$("groupCreateModal").classList.add("show");
+await renderCreateFriendList();
+}
+
+async function createGroup(){
+if(!currentUser)return;
+const name=$("groupName").value.trim();
+if(name.length<2){
+alert("Nama grup minimal 2 karakter.");
+return;
+}
+const members={[currentUser.uid]:true};
+Object.keys(selectedCreateFriends).forEach(uid=>{
+if(selectedCreateFriends[uid])members[uid]=true;
+});
+showLoading("Membuat grup...");
+try{
+const ref=db.ref("groups").push();
+const gid=ref.key;
+const group={
+id:gid,name,ownerUid:currentUser.uid,
+admins:{[currentUser.uid]:true},
+members,
+createdAt:firebase.database.ServerValue.TIMESTAMP
+};
+await ref.set(group);
+hideLoading();
+closeModal("groupCreateModal");
+selectedCreateFriends={};
+loadGroups();
+await openGroupById(gid);
+}catch(e){
+hideLoading();
+alert("Gagal membuat grup: "+e.message);
+}
+}
+
+
+/* =====================================================
+LOAD GROUPS
+===================================================== */
+
+function loadGroups(){
+
+if(!currentUser)return;
+
+if(groupListener){
+db.ref("groups").off("value",groupListener);
+}
+
+groupListener=snap=>{
+
+const data=snap.val()||{};
+
+const groups=Object.values(data)
+.filter(g=>
+g.members &&
+g.members[currentUser.uid]
+);
+
+if(!groups.length){
+
+$("groupList").innerHTML=`
+<div class="empty">
+<strong>Belum ada grup</strong>
+Buat grup untuk mulai ngobrol bersama.
+</div>`;
+
+return;
+}
+
+$("groupList").innerHTML=groups.map(g=>{
+
+const ownerVerified=
+profileVerifiedCached(g.ownerUid);
+
+return`
+<div class="list-item glass"
+onclick='openGroupById("${g.id}")'>
+
+<div class="avatar">
+${escapeHtml(g.name.charAt(0).toUpperCase())}
+</div>
+
+<div class="item-info">
+
+<div class="item-name">
+<span>${escapeHtml(g.name)}</span>
+${ownerVerified?verifiedIcon():""}
+</div>
+
+<div class="item-sub">
+${Object.keys(g.members||{}).length} anggota
+</div>
+
+</div>
+
+</div>`;
+}).join("");
+
+groups.forEach(g=>watchUserVerified(g.ownerUid));
+};
+
+db.ref("groups").on("value",groupListener);
+}
+
+
+/* =====================================================
+PROFILE CACHE FOR GROUP
+===================================================== */
+
+const verifiedCache={};
+const verifiedWatchers={};
+
+function profileVerifiedCached(uid){
+return verifiedCache[uid]===true;
+}
+
+function watchUserVerified(uid){
+
+if(!uid)return;
+
+if(verifiedWatchers[uid])return;
+
+verifiedWatchers[uid]=true;
+
+db.ref("users/"+uid+"/verified").on("value",snap=>{
+
+verifiedCache[uid]=snap.val()===true;
+
+if(currentGroupId){
+renderGroupInfo();
+}
+});
+}
+
+
+/* =====================================================
+OPEN GROUP
+===================================================== */
+
+async function openGroupById(gid){
+
+const snap=await db.ref("groups/"+gid).get();
+
+if(!snap.exists()){
+alert("Grup tidak ditemukan.");
+return;
+}
+
+openGroup(snap.val());
+}
+
+function openGroup(group){
+
+if(appLocked)return;
+
+currentGroup={...group};
+currentGroupId=group.id;
+currentChatUser=null;
+currentChatId=null;
+
+$("chatView").style.display="flex";
+$("groupInfoBtn").classList.remove("hidden");
+
+$("chatName").innerHTML=
+escapeHtml(group.name);
+
+$("chatStatus").textContent=
+Object.keys(group.members||{}).length+" anggota";
+
+listenGroupMessages();
+}
+
+
+function listenGroupMessages(){
+
+if(!currentGroupId)return;
+
+const ref=db.ref("groupMessages/"+currentGroupId).limitToLast(100);
+
+if(groupMessageListener)
+ref.off("value",groupMessageListener);
+
+groupMessageListener=async snap=>{
+
+const data=snap.val()||{};
+
+const messages=Object.entries(data)
+.map(([key,val])=>({key,...val}))
+.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+
+const profiles={};
+
+for(const m of messages){
+
+if(!profiles[m.sender]){
+
+const ps=await db.ref("users/"+m.sender).get();
+
+profiles[m.sender]=ps.val()||{
+uid:m.sender,
+username:"user",
+name:"User",
+verified:false
+};
+}
+}
+
+$("messages").innerHTML=messages.map(m=>{
+
+const u=profiles[m.sender]||{};
+
+return`
+<div class="msg ${m.sender===currentUser.uid?"me":"other"}" data-message-key="${escapeHtml(m.key)}" data-message-text="${escapeHtml(m.text)}" data-message-sender="${escapeHtml(m.sender||"")}" data-message-sender-name="${escapeHtml(m.sender===currentUser.uid?"Kamu":(u.name||u.username||"User"))}">
+
+${
+m.sender!==currentUser.uid
+?`
+<div class="msg-sender">
+<span>${escapeHtml(u.name||u.username)}</span>
+${u.verified?verifiedIcon():""}
+</div>
+`
+:""
+}
+
+${replyHtml(m.replyTo)}
+${escapeHtml(m.text)}
+<div class="msg-time">${formatTime(m.createdAt)}</div>
+${reactionHtml(m.key,m.reactions)}
+</div>`;
+
+}).join("");
+bindMessageGestures();
+
+$("messages").scrollTop=$("messages").scrollHeight;
+};
+
+ref.on("value",groupMessageListener);
+}
+
+
+/* =====================================================
+GROUP SEND
+===================================================== */
+
+async function sendGroupMessage(){
+
+if(!currentGroupId||!currentUser)return;
+
+const input=$("messageInput");
+const text=input.value.trim();
+
+if(!text)return;
+
+const spamKey="group_"+currentGroupId;
+
+if(!canSendGroupText(spamKey))
+return;
+
+await db.ref("groupMessages/"+currentGroupId).push({
+
+sender:currentUser.uid,
+text,
+...(replyTarget?{replyTo:{key:replyTarget.key,text:replyTarget.text,sender:replyTarget.sender,senderName:replyTarget.senderName}}:{}),
+createdAt:firebase.database.ServerValue.TIMESTAMP
+
+});
+
+cancelReply();
+
+input.value="";
+}
+
+function canSendGroupText(key){
+
+const data=getSpam();
+const now=Date.now();
+
+const item=data[key]||{
+count:0,
+windowStart:now
+};
+
+if(now-item.windowStart>SPAM_WINDOW){
+item.count=0;
+item.windowStart=now;
+}
+
+if(item.count>=SPAM_LIMIT){
+triggerSpamBlock();
+return false;
+}
+
+item.count++;
+
+data[key]=item;
+saveSpam(data);
+
+return true;
+}
+
+
+/* =====================================================
+GROUP INFO
+===================================================== */
+
+async function openGroupInfo(){
+
+if(!currentGroupId)return;
+
+await refreshCurrentGroup();
+
+$("groupInfoModal").classList.add("show");
+
+renderGroupInfo();
+}
+
+async function refreshCurrentGroup(){
+
+if(!currentGroupId)return;
+
+const snap=await db.ref("groups/"+currentGroupId).get();
+
+if(snap.exists())
+currentGroup=snap.val();
+}
+
+function renderGroupInfo(){
+
+if(!currentGroup)return;
+
+const group=currentGroup;
+
+watchUserVerified(group.ownerUid);
+
+const members=Object.keys(group.members||{});
+
+$("groupInfoContent").innerHTML=`
+
+<div class="group-cover">
+${escapeHtml(group.name.charAt(0).toUpperCase())}
+</div>
+
+<div class="group-head-info">
+
+<div class="group-head-name">
+<span>${escapeHtml(group.name)}</span>
+${profileVerifiedCached(group.ownerUid)?verifiedIcon():""}
+</div>
+
+<div class="group-head-sub">
+${members.length} anggota
+</div>
+
+</div>
+
+<div class="group-info-actions" style="grid-template-columns:${(currentUser.uid===group.ownerUid||(group.admins&&group.admins[currentUser.uid]))?'1fr 1fr':'1fr'}">
+
+${(currentUser.uid===group.ownerUid||(group.admins&&group.admins[currentUser.uid]))?`
+<button class="group-info-btn glass-btn"
+onclick="closeModal('groupInfoModal');openGroupAddMembers()">
+<span class="material-symbols-rounded" style="vertical-align:middle">person_add</span> Tambah Anggota
+</button>`:""}
+
+<button class="group-info-btn glass-btn"
+onclick="copyGroupInviteLink()">
+<span class="material-symbols-rounded" style="vertical-align:middle">link</span> Salin Link Grup
+</button>
+
+</div>
+
+<div class="member-title">
+Anggota Grup
+</div>
+
+<div id="groupMembers"></div>
+`;
+
+renderGroupMembers();
+}
+
+async function renderGroupMembers(){
+
+if(!currentGroup)return;
+
+const box=$("groupMembers");
+
+if(!box)return;
+
+const ids=Object.keys(currentGroup.members||{});
+
+if(!ids.length){
+box.innerHTML=`<div class="empty">Tidak ada anggota.</div>`;
+return;
+}
+
+const users=[];
+
+for(const uid of ids){
+
+const snap=await db.ref("users/"+uid).get();
+
+if(snap.exists())
+users.push(snap.val());
+}
+
+box.innerHTML=users.map(user=>{
+
+watchUserVerified(user.uid);
+
+const isOwner=
+user.uid===currentGroup.ownerUid;
+
+const isAdmin=
+!!(currentGroup.admins&&currentGroup.admins[user.uid]);
+
+return`
+
+<div class="member-row glass"
+onclick='openMemberAction(${JSON.stringify(user)})'>
+
+<div class="avatar">
+
+${
+user.photo
+?`<img src="${escapeHtml(user.photo)}">`
+:escapeHtml((user.name||user.username).charAt(0).toUpperCase())
+}
+
+</div>
+
+<div class="member-info">
+
+<div class="member-name">
+
+<span>
+${escapeHtml(user.name||user.username)}
+</span>
+
+${user.verified?verifiedIcon():""}
+
+</div>
+
+<div class="member-sub">
+@${escapeHtml(user.username)}
+</div>
+
+</div>
+
+${
+isOwner
+?`<span class="role-badge">OWNER</span>`
+:isAdmin
+?`<span class="role-badge">ADMIN</span>`
+:""
+}
+
+</div>`;
+}).join("");
+}
+
+
+/* =====================================================
+MEMBER ACTION SHEET
+===================================================== */
+
+function openMemberAction(user){
+
+if(!currentGroup)return;
+
+selectedMember=user;
+
+const isOwner=
+user.uid===currentGroup.ownerUid;
+
+const isAdmin=
+!!(currentGroup.admins&&currentGroup.admins[user.uid]);
+
+const myOwner=
+currentUser.uid===currentGroup.ownerUid;
+
+const myAdmin=
+!!(currentGroup.admins&&currentGroup.admins[currentUser.uid]);
+
+$("memberActionProfile").innerHTML=`
+
+<div class="avatar">
+
+${
+user.photo
+?`<img src="${escapeHtml(user.photo)}">`
+:escapeHtml((user.name||user.username).charAt(0).toUpperCase())
+}
+
+</div>
+
+<div class="action-profile-info">
+
+<div class="action-profile-name">
+<span>${escapeHtml(user.name||user.username)}</span>
+${user.verified?verifiedIcon():""}
+</div>
+
+<div class="action-profile-user">
+@${escapeHtml(user.username)}
+${isOwner?" · Owner":isAdmin?" · Admin":""}
+</div>
+
+</div>
+`;
+
+let html="";
+
+if(user.uid===currentUser.uid){
+
+html+=`
+<button class="action-btn glass-btn"
+onclick="leaveGroup()">
+
+<div class="action-icon">
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<path d="M10 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5"
+stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+<path d="M14 8l4 4-4 4"
+stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+<path d="M9 12h9"
+stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+</svg>
+</div>
+
+Keluar dari Grup
+</button>`;
+}
+
+if(isOwner){
+
+html+=`
+<div class="action-btn glass-btn"
+style="opacity:.55;cursor:default">
+
+<div class="action-icon">
+👑
+</div>
+
+Owner Grup
+</div>`;
+
+}else{
+
+if(myOwner){
+
+if(!isAdmin){
+
+html+=`
+<button class="action-btn glass-btn"
+onclick="makeAdmin()">
+
+<div class="action-icon">
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<path d="M12 3l2.2 5.2L20 9l-4 4 .9 5.8L12 16l-4.9 2.8L8 13l-4-4 5.8-.8L12 3Z"
+stroke="currentColor" stroke-width="1.6"
+stroke-linejoin="round"/>
+</svg>
+</div>
+
+Jadikan Admin
+</button>`;
+
+}else{
+
+html+=`
+<button class="action-btn glass-btn"
+onclick="revokeAdmin()">
+
+<div class="action-icon">
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<path d="M5 12h14"
+stroke="currentColor" stroke-width="2"
+stroke-linecap="round"/>
+</svg>
+</div>
+
+Cabut Admin
+</button>`;
+}
+
+}
+
+if(myOwner || (!isAdmin&&myAdmin)){
+
+html+=`
+<button class="action-btn glass-btn"
+onclick="removeMember()">
+
+<div class="action-icon">
+<svg class="icon" viewBox="0 0 24 24" fill="none">
+<path d="M6 7h12M9 7V5h6v2M8 10v7M12 10v7M16 10v7"
+stroke="currentColor" stroke-width="1.7"
+stroke-linecap="round"/>
+<path d="M7 7l1 14h8l1-14"
+stroke="currentColor" stroke-width="1.7"
+stroke-linejoin="round"/>
+</svg>
+</div>
+
+Keluarkan dari Grup
+</button>`;
+}
+
+}
+
+if(!html){
+
+html=`
+<div class="empty" style="padding:25px 10px">
+<strong>Tidak ada aksi</strong>
+Kamu tidak punya izin mengelola anggota ini.
+</div>`;
+}
+
+$("memberActionButtons").innerHTML=html;
+
+$("memberActionLayer").classList.add("show");
+}
+
+function closeMemberAction(){
+
+selectedMember=null;
+$("memberActionLayer").classList.remove("show");
+}
+
+
+/* =====================================================
+ADMIN ACTIONS
+===================================================== */
+
+async function makeAdmin(){
+
+if(!selectedMember||!currentGroup)return;
+
+if(currentUser.uid!==currentGroup.ownerUid){
+alert("Hanya owner yang bisa menjadikan admin.");
+return;
+}
+
+await db.ref(
+"groups/"+currentGroupId+"/admins/"+selectedMember.uid
+).set(true);
+
+closeMemberAction();
+
+await refreshCurrentGroup();
+
+renderGroupInfo();
+}
+
+async function revokeAdmin(){
+
+if(!selectedMember||!currentGroup)return;
+
+if(currentUser.uid!==currentGroup.ownerUid){
+alert("Hanya owner yang bisa mencabut admin.");
+return;
+}
+
+if(selectedMember.uid===currentGroup.ownerUid)return;
+
+await db.ref(
+"groups/"+currentGroupId+"/admins/"+selectedMember.uid
+).remove();
+
+closeMemberAction();
+
+await refreshCurrentGroup();
+
+renderGroupInfo();
+}
+
+async function removeMember(){
+
+if(!selectedMember||!currentGroup)return;
+
+const target=selectedMember.uid;
+
+if(target===currentGroup.ownerUid){
+alert("Owner tidak bisa dikeluarkan.");
+return;
+}
+
+const myOwner=
+currentUser.uid===currentGroup.ownerUid;
+
+const myAdmin=
+!!(currentGroup.admins&&currentGroup.admins[currentUser.uid]);
+
+const targetAdmin=
+!!(currentGroup.admins&&currentGroup.admins[target]);
+
+if(!myOwner){
+
+if(!myAdmin){
+alert("Kamu bukan admin.");
+return;
+}
+
+if(targetAdmin){
+alert("Admin biasa tidak bisa mengeluarkan admin lain.");
+return;
+}
+}
+
+await db.ref(
+"groups/"+currentGroupId+"/members/"+target
+).remove();
+
+await db.ref(
+"groups/"+currentGroupId+"/admins/"+target
+).remove();
+
+closeMemberAction();
+
+await refreshCurrentGroup();
+
+renderGroupInfo();
+
+loadGroups();
+}
+
+async function leaveGroup(){
+
+if(!currentGroup)return;
+
+if(currentUser.uid===currentGroup.ownerUid){
+alert("Owner tidak bisa keluar begitu saja. Pindahkan owner terlebih dahulu.");
+return;
+}
+
+await db.ref(
+"groups/"+currentGroupId+"/members/"+currentUser.uid
+).remove();
+
+await db.ref(
+"groups/"+currentGroupId+"/admins/"+currentUser.uid
+).remove();
+
+closeMemberAction();
+closeModal("groupInfoModal");
+closeChat();
+
+loadGroups();
+}
+
+
+/* =====================================================
+GROUP ADD / SHARE
+===================================================== */
+
+async function openGroupAddMembers(){
+if(!currentGroup||!currentGroupId)return;
+const allowed=currentUser.uid===currentGroup.ownerUid||
+!!(currentGroup.admins&&currentGroup.admins[currentUser.uid]);
+if(!allowed){
+alert("Hanya owner atau admin yang bisa menambahkan anggota.");
+return;
+}
+selectedAddFriends={};
+$("groupAddModal").classList.add("show");
+await renderAddFriendList();
+}
+
+async function renderAddFriendList(){
+const box=$("addFriendList");
+if(!box)return;
+box.innerHTML='<div class="friend-picker-empty">Memuat teman...</div>';
+try{
+await refreshCurrentGroup();
+const friends=await getMyFriends();
+const available=friends.filter(u=>!(currentGroup.members&&currentGroup.members[u.uid]));
+if(!available.length){
+box.innerHTML='<div class="friend-picker-empty">Tidak ada teman baru untuk ditambahkan.</div>';
+return;
+}
+box.innerHTML=available.map(u=>friendPickerRow(u,false,"add")).join("");
+}catch(e){
+box.innerHTML='<div class="friend-picker-empty">Gagal memuat teman: '+escapeHtml(e.message)+'</div>';
+}
+}
+
+async function confirmAddGroupMembers(){
+if(!currentGroup||!currentGroupId)return;
+const allowed=currentUser.uid===currentGroup.ownerUid||
+!!(currentGroup.admins&&currentGroup.admins[currentUser.uid]);
+if(!allowed){
+alert("Hanya owner atau admin yang bisa menambahkan anggota.");
+return;
+}
+const ids=Object.keys(selectedAddFriends).filter(uid=>selectedAddFriends[uid]===true);
+if(!ids.length){
+alert("Pilih minimal satu teman.");
+return;
+}
+showLoading("Menambahkan anggota...");
+try{
+const updates={};
+for(const uid of ids){
+if(!(currentGroup.members&&currentGroup.members[uid])){
+updates["groups/"+currentGroupId+"/members/"+uid]=true;
+}
+}
+if(!Object.keys(updates).length){
+hideLoading();
+alert("Teman yang dipilih sudah menjadi anggota grup.");
+return;
+}
+await db.ref().update(updates);
+hideLoading();
+closeModal("groupAddModal");
+selectedAddFriends={};
+await refreshCurrentGroup();
+renderGroupInfo();
+$("groupInfoModal").classList.add("show");
+$("chatStatus").textContent=Object.keys(currentGroup.members||{}).length+" anggota";
+loadGroups();
+alert("Anggota berhasil ditambahkan.");
+}catch(e){
+hideLoading();
+alert("Gagal menambahkan anggota: "+e.message);
+}
+}
+
+async function copyGroupInviteLink(){
+if(!currentGroup||!currentGroupId)return;
+const url=new URL(window.location.href);
+url.searchParams.set("joinGroup",currentGroupId);
+const inviteLink=url.toString();
+try{
+if(navigator.clipboard&&window.isSecureContext){
+await navigator.clipboard.writeText(inviteLink);
+}else{
+const area=document.createElement("textarea");
+area.value=inviteLink;area.style.position="fixed";area.style.opacity="0";
+document.body.appendChild(area);area.select();
+const ok=document.execCommand("copy");area.remove();
+if(!ok)throw new Error("Clipboard tidak tersedia");
+}
+alert("Link undangan grup berhasil disalin!");
+}catch(e){
+alert("Gagal menyalin link. Salin manual:\n"+inviteLink);
+}
+}
+
+let inviteJoinRunning=false;
+async function joinGroupFromInviteLink(){
+if(inviteJoinRunning||!currentUser)return;
+const url=new URL(window.location.href);
+const gid=url.searchParams.get("joinGroup");
+if(!gid)return;
+inviteJoinRunning=true;
+try{
+const snap=await db.ref("groups/"+gid).get();
+if(!snap.exists()){
+alert("Grup tidak ditemukan atau link undangan sudah tidak berlaku.");
+return;
+}
+const group=snap.val();
+if(!group.members||!group.members[currentUser.uid]){
+await db.ref("groups/"+gid+"/members/"+currentUser.uid).set(true);
+}
+url.searchParams.delete("joinGroup");
+window.history.replaceState({},"",url.toString());
+await openGroupById(gid);
+loadGroups();
+alert("Berhasil bergabung ke grup "+(group.name||"")+"!");
+}catch(e){
+alert("Gagal bergabung ke grup: "+e.message+"\nPastikan Firebase Rules mengizinkan pengguna membaca grup dan menambahkan keanggotaan.");
+}finally{
+inviteJoinRunning=false;
+}
+}
+
+
+/* =====================================================
+SPAM
+===================================================== */
+
+function getSpam(){
+
+try{
+return JSON.parse(
+localStorage.getItem("vischat_spam")||"{}"
+);
+}catch(e){
+return{};
+}
+}
+
+function saveSpam(data){
+localStorage.setItem("vischat_spam",JSON.stringify(data));
+}
+
+function resetSpam(chatId){
+
+const data=getSpam();
+delete data[chatId];
+saveSpam(data);
+}
+
+function canSendText(){
+
+if(!currentChatId)return false;
+
+const data=getSpam();
+
+const item=data[currentChatId]||{
+count:0,
+windowStart:Date.now(),
+lastIncoming:0
+};
+
+const now=Date.now();
+
+if(now-item.windowStart>SPAM_WINDOW){
+item.count=0;
+item.windowStart=now;
+}
+
+if(item.lastIncoming>item.windowStart){
+item.count=0;
+item.windowStart=now;
+}
+
+if(item.count>=SPAM_LIMIT){
+
+saveSpam(data);
+triggerSpamBlock();
+return false;
+}
+
+item.count++;
+
+data[currentChatId]=item;
+saveSpam(data);
+
+return true;
+}
+
+async function sendMessage(){
+
+if(appLocked)return;
+if(!currentUser)return;
+
+if(currentGroupId){
+await sendGroupMessage();
+return;
+}
+
+if(!currentChatUser)return;
+
+const input=$("messageInput");
+const text=input.value.trim();
+
+if(!text)return;
+
+if(!canSendText())return;
+
+await db.ref("messages/"+currentChatId).push({
+
+sender:currentUser.uid,
+receiver:currentChatUser.uid,
+text,
+...(replyTarget?{replyTo:{key:replyTarget.key,text:replyTarget.text,sender:replyTarget.sender,senderName:replyTarget.senderName}}:{}),
+createdAt:firebase.database.ServerValue.TIMESTAMP
+
+});
+
+input.value="";
+cancelReply();
+}
+
+
+/* =====================================================
+BLOCK
+===================================================== */
+
+function getBlocks(){
+
+try{
+return JSON.parse(
+localStorage.getItem("vischat_blocks")||"{}"
+);
+}catch(e){
+return{};
+}
+}
+
+function saveBlocks(data){
+localStorage.setItem("vischat_blocks",JSON.stringify(data));
+}
+
+function getMyBlock(){
+
+const data=getBlocks();
+
+return data[currentUser.uid]||{
+strikes:0,
+blockedUntil:0,
+permanent:false,
+reviewUsed:false
+};
+}
+
+function setMyBlock(block){
+
+const data=getBlocks();
+data[currentUser.uid]=block;
+saveBlocks(data);
+
+return block;
+}
+
+function triggerSpamBlock(){
+
+let block=getMyBlock();
+
+block.strikes++;
+block.reviewUsed=false;
+
+if(block.strikes>=3){
+block.permanent=true;
+block.blockedUntil=0;
+}else{
+block.blockedUntil=0;
+}
+
+setMyBlock(block);
+
+lockEntireApp();
+showBlockScreen();
+}
+
+function lockEntireApp(){
+
+appLocked=true;
+document.body.classList.add("app-locked");
+
+closeChat();
+
+document.querySelectorAll(".modal-layer")
+.forEach(m=>m.classList.remove("show"));
+
+$("blockOverlay").classList.add("show");
+}
+
+function unlockEntireApp(){
+
+appLocked=false;
+document.body.classList.remove("app-locked");
+
+$("blockOverlay").classList.remove("show");
+
+if(blockTimerId){
+clearInterval(blockTimerId);
+blockTimerId=null;
+}
+
+showPage("chats");
+}
+
+function checkBlockState(){
+
+if(!currentUser)return;
+
+const block=getMyBlock();
+
+if(block.permanent){
+
+lockEntireApp();
+showPermanentBlock();
+return;
+}
+
+if(block.blockedUntil&&block.blockedUntil>Date.now()){
+
+lockEntireApp();
+showBlockScreen();
+startBlockTimer();
+return;
+}
+
+if(block.blockedUntil&&block.blockedUntil<=Date.now()){
+
+block.blockedUntil=0;
+setMyBlock(block);
+
+unlockEntireApp();
+return;
+}
+
+$("blockOverlay").classList.remove("show");
+appLocked=false;
+document.body.classList.remove("app-locked");
+}
+
+function showBlockScreen(){
+
+const block=getMyBlock();
+
+$("blockTitle").textContent="Akun Dibatasi";
+
+if(block.blockedUntil){
+
+$("blockText").textContent=
+"Akun sementara dikunci karena aktivitas pesan terlalu banyak.";
+
+$("reviewBtn").style.display=
+block.reviewUsed?"none":"block";
+
+$("blockTimer").style.display="block";
+
+updateBlockScreen();
+startBlockTimer();
+
+}else{
+
+$("blockText").textContent=
+"Akun terdeteksi melakukan spam.";
+
+$("blockTimer").style.display="none";
+
+$("reviewBtn").style.display=
+block.reviewUsed?"none":"block";
+}
+}
+
+function showPermanentBlock(){
+
+$("blockTitle").textContent="Akun Diblokir Permanen";
+
+$("blockText").textContent=
+"Akun ini sudah mencapai batas pelanggaran. Gunakan akun lain atau buat akun baru.";
+
+$("blockTimer").style.display="none";
+$("reviewBtn").style.display="none";
+}
+
+function reviewBlock(){
+
+const block=getMyBlock();
+
+if(block.permanent||block.reviewUsed)return;
+
+block.reviewUsed=true;
+block.blockedUntil=Date.now()+BLOCK_TIME;
+
+setMyBlock(block);
+
+lockEntireApp();
+showBlockScreen();
+startBlockTimer();
+}
+
+function startBlockTimer(){
+
+if(blockTimerId)
+clearInterval(blockTimerId);
+
+updateBlockScreen();
+
+blockTimerId=setInterval(updateBlockScreen,1000);
+}
+
+function updateBlockScreen(){
+
+const block=getMyBlock();
+
+if(block.permanent){
+showPermanentBlock();
+return;
+}
+
+const remain=block.blockedUntil-Date.now();
+
+if(remain<=0){
+
+block.blockedUntil=0;
+setMyBlock(block);
+
+if(blockTimerId){
+clearInterval(blockTimerId);
+blockTimerId=null;
+}
+
+unlockEntireApp();
+return;
+}
+
+const total=Math.floor(remain/1000);
+const h=Math.floor(total/3600);
+const m=Math.floor((total%3600)/60);
+const s=total%60;
+
+$("blockTimer").textContent=
+String(h).padStart(2,"0")+":"+
+String(m).padStart(2,"0")+":"+
+String(s).padStart(2,"0");
+}
+
+function openRegisterFromBlock(){
+
+if(blockTimerId){
+clearInterval(blockTimerId);
+blockTimerId=null;
+}
+
+appLocked=false;
+document.body.classList.remove("app-locked");
+$("blockOverlay").classList.remove("show");
+
+$("mainScreen").classList.add("hidden");
+$("authScreen").style.display="flex";
+
+$("authUsername").value="";
+$("authPassword").value="";
+
+registerMode=true;
+
+$("authButton").textContent="Daftar";
+$("authSub").textContent="Buat akun VISCHAT baru";
+$("authSwitchText").textContent="Masuk";
+
+localStorage.removeItem("vischat_current");
+
+currentUser=null;
+}
+
+
+/* =====================================================
+MODAL
+===================================================== */
+
+function closeModal(id){
+$(id).classList.remove("show");
+}
+
+
+/* =====================================================
+LOGOUT
+===================================================== */
+
+function logout(){
+
+if(!currentUser)return;
+
+rememberAccount(currentUser);
+
+localStorage.removeItem("vischat_current");
+
+closeChat();
+
+$("mainScreen").classList.add("hidden");
+$("authScreen").style.display="flex";
+
+$("authUsername").value="";
+$("authPassword").value="";
+
+registerMode=false;
+
+$("authButton").textContent="Masuk";
+$("authSub").textContent="Masuk ke akun kamu";
+$("authSwitchText").textContent="Daftar";
+
+currentUser=null;
+}
+
+
+/* =====================================================
+STARTUP
+===================================================== */
+
+async function startup(){
+
+const uid=localStorage.getItem("vischat_current");
+
+if(!uid){
+$("authScreen").style.display="flex";
+return;
+}
+
+const account=getAccounts().find(a=>a.uid===uid);
+
+if(!account){
+
+localStorage.removeItem("vischat_current");
+$("authScreen").style.display="flex";
+return;
+}
+
+showLoading("Memuat akun...");
+
+try{
+
+const snap=await db.ref("users/"+uid).get();
+
+if(snap.exists()){
+currentUser={...account,...snap.val()};
+}else{
+currentUser=account;
+}
+
+rememberAccount(currentUser);
+
+hideLoading();
+
+showMain();
+checkBlockState();
+
+}catch(e){
+
+hideLoading();
+
+currentUser=account;
+
+showMain();
+checkBlockState();
+}
+}
+
+
+/* =====================================================
+REAL VOICE CALL - WEBRTC + FIREBASE REALTIME DATABASE
+No Firebase Storage used. Audio travels peer-to-peer.
+===================================================== */
+let voicePeer=null,voiceLocalStream=null,voiceCallRef=null,voiceCallId=null;
+let voiceRole=null,voiceCandidateListener=null,voiceAnswerListener=null,voiceCallStateListener=null;
+let voiceMuted=false,voiceIncomingData=null,voicePendingCandidates=[];
+let voiceChatMessageId=null,voiceChatId=null,voiceCallAnswered=false,voiceCallStartedAt=0;
+const voiceRtcConfig={iceServers:[{urls:"stun:stun.l.google.com:19302"},{urls:"stun:stun1.l.google.com:19302"}]};
+function voiceCallUi(name,status,avatar){
+ const layer=$("voiceCallLayer"); if(!layer)return;
+ $("voiceCallName").textContent=name||"Voice Call";
+ $("voiceCallStatus").textContent=status||"";
+ $("voiceCallAvatar").textContent=(avatar||name||"V").trim().charAt(0).toUpperCase();
+ layer.classList.add("show");
+}
+function voiceSetStatus(t){if($("voiceCallStatus"))$("voiceCallStatus").textContent=t;}
+async function voiceGetMic(){
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw new Error("Mikrofon tidak tersedia. Buka VISCHAT lewat HTTPS dan izinkan akses mikrofon di WebView.");
+ return await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true},video:false});
+}
+function voiceMakePeer(){
+ voicePeer=new RTCPeerConnection(voiceRtcConfig);
+ voicePeer.ontrack=e=>{const audio=$("remoteCallAudio");audio.srcObject=e.streams[0];audio.play().catch(()=>voiceSetStatus("Sentuh layar untuk mengaktifkan audio"));};
+ voicePeer.oniceconnectionstatechange=()=>{
+  if(!voicePeer)return;
+  const st=voicePeer.iceConnectionState;
+  if(st==="connected"||st==="completed")voiceSetStatus("Terhubung • Panggilan berlangsung");
+  else if(st==="failed")voiceSetStatus("Koneksi gagal. Coba jaringan lain.");
+  else if(st==="disconnected")voiceSetStatus("Koneksi terputus, mencoba menyambung...");
+ };
+ voiceLocalStream.getTracks().forEach(t=>voicePeer.addTrack(t,voiceLocalStream));
+}
+function voiceListenCandidates(path){
+ if(voiceCandidateListener&&voiceCallRef){voiceCallRef.child(path).off("child_added",voiceCandidateListener);}
+ voiceCandidateListener=snap=>{const c=snap.val();if(!c||!voicePeer)return;if(voicePeer.remoteDescription&&voicePeer.remoteDescription.type){voicePeer.addIceCandidate(new RTCIceCandidate(c)).catch(e=>console.warn("ICE candidate",e));}else{voicePendingCandidates.push(c);}};
+ voiceCallRef.child(path).on("child_added",voiceCandidateListener);
+}
+async function startVoiceCall(){
+ if(!currentUser||!currentChatUser||currentGroupId){alert("Voice Call hanya tersedia di chat pribadi.");return;}
+ if(!location.protocol.includes("https")&&!['localhost','127.0.0.1'].includes(location.hostname)){alert("Voice Call perlu HTTPS agar mikrofon bisa digunakan.");return;}
+ if(voicePeer){alert("Panggilan sedang aktif.");return;}
+ try{
+  voiceCallUi(currentChatUser.name||currentChatUser.username,"Meminta izin mikrofon...",currentChatUser.name||currentChatUser.username);
+  $("voiceCallKicker").textContent="VISCHAT • MEMANGGIL";
+  $("voiceEndLabel").textContent="Batal";
+  voiceLocalStream=await voiceGetMic();
+  voiceRole="caller";
+  voiceCallAnswered=false;
+  voiceCallStartedAt=0;
+  voiceChatMessageId=await createVoiceCallMessage();
+  const callsRef=db.ref("rtcVoiceCalls/"+currentChatUser.uid);
+  voiceCallRef=callsRef.push();voiceCallId=voiceCallRef.key;
+  voiceMakePeer();
+  voicePeer.onicecandidate=e=>{if(e.candidate)voiceCallRef.child("callerCandidates").push(e.candidate.toJSON());};
+  const offer=await voicePeer.createOffer();await voicePeer.setLocalDescription(offer);
+  await voiceCallRef.set({id:voiceCallId,caller:currentUser.uid,callerName:currentUser.name||currentUser.username||"User",callee:currentChatUser.uid,status:"ringing",chatMessageId:voiceChatMessageId||"",offer:{type:offer.type,sdp:offer.sdp},createdAt:firebase.database.ServerValue.TIMESTAMP});
+  voiceSetStatus("Memanggil...");
+  voiceAnswerListener=snap=>{const v=snap.val();if(v&&v.answer&&voicePeer&&voicePeer.signalingState!=="stable")voicePeer.setRemoteDescription(new RTCSessionDescription(v.answer)).then(async()=>{const queued=voicePendingCandidates.splice(0);for(const c of queued){try{await voicePeer.addIceCandidate(new RTCIceCandidate(c));}catch(e){console.warn("Queued ICE",e);}}}).catch(console.warn);};
+  voiceCallRef.on("value",voiceAnswerListener);
+  voiceListenCandidates("calleeCandidates");
+  voiceCallStateListener=snap=>{
+   const v=snap.val();
+   if(!v)return;
+   if(v.chatMessageId&&!voiceChatMessageId)voiceChatMessageId=v.chatMessageId;
+   if(v.status==="answered"&&!voiceCallAnswered){
+    voiceCallAnswered=true;
+    voiceCallStartedAt=Date.now();
+    voiceSetStatus("Terhubung • Panggilan berlangsung");
+    updateVoiceCallMessage("answered");
+   }
+   if(v.status==="ended"||v.status==="declined"||v.status==="missed"){
+    voiceSetStatus(v.status==="declined"?"Panggilan ditolak":v.status==="missed"?"Panggilan tidak terjawab":"Panggilan berakhir");
+    updateVoiceCallMessage(v.status,v.status==="ended"&&voiceCallStartedAt?Math.max(1,Math.floor((Date.now()-voiceCallStartedAt)/1000)):0);
+    setTimeout(()=>{if(voicePeer)endVoiceCall(false);},700);
+   }
+  };
+  voiceCallRef.on("value",voiceCallStateListener);
+ }catch(e){console.error(e);alert("Gagal memulai Voice Call: "+(e.message||e));await endVoiceCall(false);}
+}
+function listenForVoiceCalls(){
+ if(!currentUser)return;
+ db.ref("rtcVoiceCalls/"+currentUser.uid).on("child_added",snap=>{
+  const call=snap.val();if(!call||call.status!=="ringing"||call.callee!==currentUser.uid||call.caller===currentUser.uid)return;
+  if(voicePeer){db.ref("rtcVoiceCalls/"+currentUser.uid+"/"+snap.key+"/status").set("busy");return;}
+  voiceIncomingData={...call,id:snap.key};voiceCallRef=db.ref("rtcVoiceCalls/"+currentUser.uid+"/"+snap.key);voiceRole="callee";
+  voiceChatMessageId=call.chatMessageId||null;
+  voiceCallAnswered=false;
+  voiceCallStartedAt=0;
+  voiceCallUi(call.callerName||"Pengguna VISCHAT","Panggilan suara masuk...",call.callerName||"V");
+  $("voiceCallKicker").textContent="VISCHAT • PANGGILAN MASUK";
+  $("voiceEndLabel").textContent="Tolak";
+  if(navigator.vibrate)navigator.vibrate([350,180,350,180,600]);
+  $("voiceAcceptBtn").style.display="";
+  $("voiceMuteBtn").style.display="none";
+ });
+}
+async function acceptVoiceCall(){
+ if(!voiceIncomingData||!voiceCallRef)return;
+ try{
+  $("voiceAcceptBtn").style.display="none";voiceSetStatus("Menghubungkan mikrofon...");
+  voiceLocalStream=await voiceGetMic();voiceMakePeer();
+  voicePeer.onicecandidate=e=>{if(e.candidate)voiceCallRef.child("calleeCandidates").push(e.candidate.toJSON());};
+  await voicePeer.setRemoteDescription(new RTCSessionDescription(voiceIncomingData.offer));
+  const answer=await voicePeer.createAnswer();await voicePeer.setLocalDescription(answer);
+  await voiceCallRef.update({answer:{type:answer.type,sdp:answer.sdp},status:"answered"});
+  voiceCallAnswered=true;
+  voiceCallStartedAt=Date.now();
+  await updateVoiceCallMessage("answered");
+  voiceListenCandidates("callerCandidates");
+  $("voiceMuteBtn").style.display="";voiceSetStatus("Menghubungkan...");
+  $("voiceCallKicker").textContent="VISCHAT • TERHUBUNG";
+  $("voiceEndLabel").textContent="Akhiri";
+  voiceCallStateListener=snap=>{
+   const v=snap.val();
+   if(!v)return;
+   if(v.status==="ended"||v.status==="declined"||v.status==="missed"){
+    voiceSetStatus(v.status==="missed"?"Panggilan tidak terjawab":v.status==="declined"?"Panggilan ditolak":"Panggilan berakhir");
+    setTimeout(()=>{if(voicePeer)endVoiceCall(false);},500);
+   }
+  };
+  voiceCallRef.on("value",voiceCallStateListener);
+  voiceIncomingData=null;
+ }catch(e){console.error(e);alert("Tidak bisa menerima panggilan: "+(e.message||e));await endVoiceCall();}
+}
+function toggleCallMute(){
+ if(!voiceLocalStream)return;voiceMuted=!voiceMuted;
+ voiceLocalStream.getAudioTracks().forEach(t=>t.enabled=!voiceMuted);
+ $("voiceMuteBtn").innerHTML=`<span class="material-symbols-rounded">${voiceMuted?"mic_off":"mic"}</span>${voiceMuted?"Unmute":"Mute"}`;
+}
+async function endVoiceCall(updateRemote=true){
+ const ref=voiceCallRef;
+ const wasIncoming=voiceRole==="callee"&&!!voiceIncomingData;
+ let finalStatus=null;
+ let duration=0;
+ if(voiceCallStartedAt)duration=Math.max(1,Math.floor((Date.now()-voiceCallStartedAt)/1000));
+ if(updateRemote&&ref){
+  try{
+   if(wasIncoming&&!voiceCallAnswered)finalStatus="declined";
+   else if(!voiceCallAnswered)finalStatus="missed";
+   else finalStatus="ended";
+   await ref.child("status").set(finalStatus);
+   await updateVoiceCallMessage(finalStatus,duration);
+  }catch(e){}
+ }else if(finalStatus===null){
+  if(!voiceCallAnswered&&voiceRole==="caller")finalStatus="missed";
+ }
+ if(voiceCandidateListener&&ref){ref.child("callerCandidates").off("child_added",voiceCandidateListener);ref.child("calleeCandidates").off("child_added",voiceCandidateListener);}
+ if(voiceAnswerListener&&ref)ref.off("value",voiceAnswerListener);
+ if(voiceCallStateListener&&ref)ref.off("value",voiceCallStateListener);
+ if(voicePeer){voicePeer.ontrack=null;voicePeer.onicecandidate=null;voicePeer.close();voicePeer=null;}
+ if(voiceLocalStream){voiceLocalStream.getTracks().forEach(t=>t.stop());voiceLocalStream=null;}
+ const audio=$("remoteCallAudio");if(audio){audio.pause();audio.srcObject=null;}
+ voiceCallRef=null;voiceCallId=null;voiceRole=null;voicePendingCandidates=[];voiceCandidateListener=null;voiceAnswerListener=null;voiceCallStateListener=null;voiceIncomingData=null;voiceMuted=false;voiceChatMessageId=null;voiceChatId=null;voiceCallAnswered=false;voiceCallStartedAt=0;
+ if(navigator.vibrate)navigator.vibrate(0);
+ $("voiceCallLayer")?.classList.remove("show");
+ if($("voiceCallKicker"))$("voiceCallKicker").textContent="VISCHAT • VOICE CALL";
+ if($("voiceEndLabel"))$("voiceEndLabel").textContent="Akhiri";
+ if($("voiceAcceptBtn"))$("voiceAcceptBtn").style.display="none";
+ if($("voiceMuteBtn")){ $("voiceMuteBtn").style.display="";$("voiceMuteBtn").innerHTML='<span class="material-symbols-rounded">mic</span>Mute'; }
+}
+
+/* =====================================================
+REAL VIDEO CALL - WEBRTC + FIREBASE REALTIME DATABASE
+Uses the same peer-to-peer model as Voice Call, with camera + microphone.
+===================================================== */
+let videoPeer=null,videoLocalStream=null,videoCallRef=null,videoCallId=null;
+let videoRole=null,videoCandidateListener=null,videoAnswerListener=null,videoCallStateListener=null,videoIncomingStateListener=null;
+let videoMuted=false,videoCameraOff=false,videoIncomingData=null,videoPendingCandidates=[];
+let videoFacingMode="user",videoChatMessageId=null,videoChatId=null,videoCallAnswered=false,videoCallStartedAt=0;
+let videoIncomingListener=null;
+const videoRtcConfig={iceServers:[{urls:"stun:stun.l.google.com:19302"},{urls:"stun:stun1.l.google.com:19302"}]};
+
+function videoCallUi(name,status,avatar){
+ const layer=$("videoCallLayer");if(!layer)return;
+ $("videoCallName").textContent=name||"Video Call";
+ $("videoCallStatus").textContent=status||"";
+ $("videoCallPlaceholderAvatar").textContent=(avatar||name||"V").trim().charAt(0).toUpperCase();
+ // Video call sengaja tidak memakai video background agar lebih ringan.
+ layer.classList.add("show");
+}
+function videoSetStatus(t){if($("videoCallStatus"))$("videoCallStatus").textContent=t;}
+function videoSetPlaceholder(show,text){
+ const p=$("videoCallPlaceholder");if(p)p.style.display=show?"flex":"none";
+ if($("videoCallPlaceholderText"))$("videoCallPlaceholderText").textContent=text||"Menunggu video...";
+}
+function videoAttachLocal(){
+ const v=$("videoCallLocal");if(!v||!videoLocalStream)return;
+ v.srcObject=videoLocalStream;v.classList.add("show");v.play().catch(()=>{});
+}
+function videoAttachRemote(stream){
+ const v=$("videoCallRemote");if(!v)return;
+ v.srcObject=stream;v.play().then(()=>videoSetPlaceholder(false)).catch(()=>videoSetStatus("Sentuh layar untuk mengaktifkan video"));
+}
+async function videoGetMedia(facingMode="user"){
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw new Error("Kamera/mikrofon tidak tersedia. Buka VISCHAT lewat HTTPS dan izinkan Kamera + Mikrofon di WebView.");
+ return await navigator.mediaDevices.getUserMedia({
+  audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true},
+  video:{facingMode:{ideal:facingMode},width:{ideal:640,max:1280},height:{ideal:360,max:720},frameRate:{ideal:24,max:30}}
+ });
+}
+function videoMakePeer(){
+ videoPeer=new RTCPeerConnection(videoRtcConfig);
+ videoPeer.ontrack=e=>{if(e.streams&&e.streams[0])videoAttachRemote(e.streams[0]);};
+ videoPeer.oniceconnectionstatechange=()=>{
+  if(!videoPeer)return;
+  const st=videoPeer.iceConnectionState;
+  if(st==="connected"||st==="completed")videoSetStatus("Terhubung • Video call berlangsung");
+  else if(st==="failed")videoSetStatus("Koneksi gagal. Coba jaringan lain.");
+  else if(st==="disconnected")videoSetStatus("Koneksi terputus, mencoba menyambung...");
+ };
+ videoLocalStream.getTracks().forEach(t=>videoPeer.addTrack(t,videoLocalStream));
+}
+function videoListenCandidates(path){
+ if(videoCandidateListener&&videoCallRef){videoCallRef.child(path).off("child_added",videoCandidateListener);}
+ videoCandidateListener=snap=>{
+  const c=snap.val();if(!c||!videoPeer)return;
+  if(videoPeer.remoteDescription&&videoPeer.remoteDescription.type){videoPeer.addIceCandidate(new RTCIceCandidate(c)).catch(e=>console.warn("Video ICE candidate",e));}
+  else videoPendingCandidates.push(c);
+ };
+ videoCallRef.child(path).on("child_added",videoCandidateListener);
+}
+async function startVideoCall(){
+ if(!currentUser||!currentChatUser||currentGroupId){alert("Video Call hanya tersedia di chat pribadi.");return;}
+ if(!location.protocol.includes("https")&&!['localhost','127.0.0.1'].includes(location.hostname)){alert("Video Call perlu HTTPS agar kamera dan mikrofon bisa digunakan.");return;}
+ if(videoPeer||voicePeer){alert("Panggilan sedang aktif.");return;}
+ try{
+  videoCallUi(currentChatUser.name||currentChatUser.username,"Meminta izin kamera & mikrofon...",currentChatUser.name||currentChatUser.username);
+  $("videoCallKicker").textContent="VISCHAT • MEMANGGIL VIDEO";
+  $("videoEndLabel").textContent="Batal";
+  $("videoAcceptBtn").style.display="none";
+  $("videoCameraBtn").style.display="";
+  $("videoSwitchBtn").style.display="";
+  videoFacingMode="user";videoMuted=false;videoCameraOff=false;videoCallAnswered=false;videoCallStartedAt=0;
+  videoLocalStream=await videoGetMedia(videoFacingMode);
+  videoAttachLocal();
+  videoRole="caller";
+  videoSetPlaceholder(true,"Menunggu video lawan bicara...");
+  videoChatMessageId=await createVideoCallMessage();
+  const callsRef=db.ref("rtcVideoCalls/"+currentChatUser.uid);
+  videoCallRef=callsRef.push();videoCallId=videoCallRef.key;
+  videoMakePeer();
+  videoPeer.onicecandidate=e=>{if(e.candidate)videoCallRef.child("callerCandidates").push(e.candidate.toJSON());};
+  const offer=await videoPeer.createOffer();await videoPeer.setLocalDescription(offer);
+  await videoCallRef.set({id:videoCallId,caller:currentUser.uid,callerName:currentUser.name||currentUser.username||"User",callee:currentChatUser.uid,status:"ringing",chatMessageId:videoChatMessageId||"",offer:{type:offer.type,sdp:offer.sdp},createdAt:firebase.database.ServerValue.TIMESTAMP});
+  videoSetStatus("Memanggil...");
+  videoAnswerListener=snap=>{
+   const v=snap.val();
+   if(v&&v.answer&&videoPeer&&videoPeer.signalingState!=="stable")videoPeer.setRemoteDescription(new RTCSessionDescription(v.answer)).then(async()=>{const queued=videoPendingCandidates.splice(0);for(const c of queued){try{await videoPeer.addIceCandidate(new RTCIceCandidate(c));}catch(e){console.warn("Queued video ICE",e);}}}).catch(console.warn);
+  };
+  videoCallRef.on("value",videoAnswerListener);
+  videoListenCandidates("calleeCandidates");
+  videoCallStateListener=snap=>{
+   const v=snap.val();if(!v)return;
+   if(v.chatMessageId&&!videoChatMessageId)videoChatMessageId=v.chatMessageId;
+   if(v.status==="answered"&&!videoCallAnswered){videoCallAnswered=true;videoCallStartedAt=Date.now();videoSetStatus("Terhubung • Video call berlangsung");updateVideoCallMessage("answered");}
+   if(v.status==="ended"||v.status==="declined"||v.status==="missed"){
+    videoSetStatus(v.status==="declined"?"Video call ditolak":v.status==="missed"?"Video call tidak terjawab":"Video call berakhir");
+    updateVideoCallMessage(v.status,v.status==="ended"&&videoCallStartedAt?Math.max(1,Math.floor((Date.now()-videoCallStartedAt)/1000)):0);
+    setTimeout(()=>{if(videoPeer)endVideoCall(false);},700);
+   }
+  };
+  videoCallRef.on("value",videoCallStateListener);
+ }catch(e){
+  console.error(e);alert("Gagal memulai Video Call: "+(e.message||e));await endVideoCall(false);
+ }
+}
+function listenForVideoCalls(){
+ if(!currentUser)return;
+ const ref=db.ref("rtcVideoCalls/"+currentUser.uid);
+ if(videoIncomingListener)ref.off("child_added",videoIncomingListener);
+ videoIncomingListener=snap=>{
+  const call=snap.val();
+  if(!call||call.status!=="ringing"||call.callee!==currentUser.uid||call.caller===currentUser.uid)return;
+  const createdAt=Number(call.createdAt||0);
+  if(createdAt && Date.now()-createdAt>120000){ref.child(snap.key+"/status").set("missed");return;}
+  if(videoPeer||voicePeer){ref.child(snap.key+"/status").set("busy");return;}
+  videoIncomingData={...call,id:snap.key};videoCallRef=ref.child(snap.key);videoRole="callee";
+  videoChatMessageId=call.chatMessageId||null;videoCallAnswered=false;videoCallStartedAt=0;videoFacingMode="user";videoMuted=false;videoCameraOff=false;
+  videoCallUi(call.callerName||"Pengguna VISCHAT","Panggilan video masuk...",call.callerName||"V");
+  $("videoCallKicker").textContent="VISCHAT • PANGGILAN VIDEO MASUK";
+  $("videoEndLabel").textContent="Tolak";
+  $("videoAcceptBtn").style.display="";
+  $("videoMuteBtn").style.display="none";
+  $("videoCameraBtn").style.display="none";
+  $("videoSwitchBtn").style.display="none";
+  videoSetPlaceholder(true,"Panggilan video masuk");
+  if(navigator.vibrate)navigator.vibrate([350,180,350,180,600]);
+  if(videoIncomingStateListener)videoCallRef.off("value",videoIncomingStateListener);
+  videoIncomingStateListener=s=>{
+   const v=s.val();if(!v)return;
+   if(v.status==="ended"||v.status==="missed"||v.status==="declined"){
+    if(videoCallRef)videoSetStatus(v.status==="missed"?"Video call tak terjawab":v.status==="declined"?"Video call ditolak":"Video call berakhir");
+    setTimeout(()=>{if(videoCallRef===ref.child(snap.key))endVideoCall(false);},450);
+   }
+  };
+  videoCallRef.on("value",videoIncomingStateListener);
+ };
+ ref.on("child_added",videoIncomingListener);
+}
+async function acceptVideoCall(){
+ if(!videoIncomingData||!videoCallRef)return;
+ try{
+  $("videoAcceptBtn").style.display="none";$("videoMuteBtn").style.display="";$("videoCameraBtn").style.display="";$("videoSwitchBtn").style.display="";
+  videoSetStatus("Menghubungkan kamera & mikrofon...");
+  videoLocalStream=await videoGetMedia("user");videoAttachLocal();videoMakePeer();
+  videoPeer.onicecandidate=e=>{if(e.candidate)videoCallRef.child("calleeCandidates").push(e.candidate.toJSON());};
+  await videoPeer.setRemoteDescription(new RTCSessionDescription(videoIncomingData.offer));
+  const queued=videoPendingCandidates.splice(0);for(const c of queued){try{await videoPeer.addIceCandidate(new RTCIceCandidate(c));}catch(e){console.warn("Queued video ICE",e);}}
+  const answer=await videoPeer.createAnswer();await videoPeer.setLocalDescription(answer);
+  await videoCallRef.update({answer:{type:answer.type,sdp:answer.sdp},status:"answered"});
+  videoCallAnswered=true;videoCallStartedAt=Date.now();await updateVideoCallMessage("answered");
+  videoListenCandidates("callerCandidates");
+  videoSetStatus("Menghubungkan...");$("videoCallKicker").textContent="VISCHAT • TERHUBUNG";$("videoEndLabel").textContent="Akhiri";videoSetPlaceholder(true,"Menghubungkan video...");
+  videoCallStateListener=snap=>{const v=snap.val();if(!v)return;if(v.status==="ended"||v.status==="declined"||v.status==="missed"){videoSetStatus(v.status==="missed"?"Video call tak terjawab":v.status==="declined"?"Video call ditolak":"Video call berakhir");setTimeout(()=>{if(videoPeer)endVideoCall(false);},500);}};
+  videoCallRef.on("value",videoCallStateListener);
+  videoIncomingData=null;
+ }catch(e){console.error(e);alert("Tidak bisa menerima Video Call: "+(e.message||e));await endVideoCall();}
+}
+function toggleVideoCallMute(){
+ if(!videoLocalStream)return;videoMuted=!videoMuted;
+ videoLocalStream.getAudioTracks().forEach(t=>t.enabled=!videoMuted);
+ $("videoMuteBtn").innerHTML=`<span class="material-symbols-rounded">${videoMuted?"mic_off":"mic"}</span><span>${videoMuted?"Unmute":"Mute"}</span>`;
+}
+function toggleVideoCamera(){
+ if(!videoLocalStream)return;videoCameraOff=!videoCameraOff;
+ videoLocalStream.getVideoTracks().forEach(t=>t.enabled=!videoCameraOff);
+ $("videoCameraBtn").innerHTML=`<span class="material-symbols-rounded">${videoCameraOff?"videocam_off":"videocam"}</span><span>${videoCameraOff?"Nyala":"Kamera"}</span>`;
+ const local=$("videoCallLocal");if(local)local.classList.toggle("off",videoCameraOff);
+}
+async function switchVideoCamera(){
+ if(!videoLocalStream||!videoPeer||videoCameraOff)return;
+ try{
+  const next=videoFacingMode==="user"?"environment":"user";
+  const stream=await videoGetMedia(next);
+  const newTrack=stream.getVideoTracks()[0];
+  const sender=videoPeer.getSenders().find(s=>s.track&&s.track.kind==="video");
+  if(sender)await sender.replaceTrack(newTrack);
+  const oldTrack=videoLocalStream.getVideoTracks()[0];if(oldTrack)oldTrack.stop();
+  if(oldTrack)videoLocalStream.removeTrack(oldTrack);videoLocalStream.addTrack(newTrack);videoFacingMode=next;videoAttachLocal();
+ }catch(e){alert("Tidak bisa mengganti kamera: "+(e.message||e));}
+}
+async function endVideoCall(updateRemote=true){
+ const ref=videoCallRef;const wasIncoming=videoRole==="callee"&&!!videoIncomingData;let finalStatus=null;let duration=0;
+ if(videoCallStartedAt)duration=Math.max(1,Math.floor((Date.now()-videoCallStartedAt)/1000));
+ if(updateRemote&&ref){
+  try{if(wasIncoming&&!videoCallAnswered)finalStatus="declined";else if(!videoCallAnswered)finalStatus="missed";else finalStatus="ended";await ref.child("status").set(finalStatus);await updateVideoCallMessage(finalStatus,duration);}catch(e){}
+ }
+ if(videoCandidateListener&&ref){ref.child("callerCandidates").off("child_added",videoCandidateListener);ref.child("calleeCandidates").off("child_added",videoCandidateListener);}
+ if(videoAnswerListener&&ref)ref.off("value",videoAnswerListener);
+ if(videoCallStateListener&&ref)ref.off("value",videoCallStateListener);
+ if(videoIncomingStateListener&&ref)ref.off("value",videoIncomingStateListener);
+ if(videoIncomingListener)db.ref("rtcVideoCalls/"+(currentUser?currentUser.uid:"" )).off("child_added",videoIncomingListener);
+ if(videoPeer){videoPeer.ontrack=null;videoPeer.onicecandidate=null;videoPeer.close();videoPeer=null;}
+ if(videoLocalStream){videoLocalStream.getTracks().forEach(t=>t.stop());videoLocalStream=null;}
+ const remote=$("videoCallRemote");if(remote){remote.pause();remote.srcObject=null;}
+ const local=$("videoCallLocal");if(local){local.pause();local.srcObject=null;local.classList.remove("show","off");}
+ videoCallRef=null;videoCallId=null;videoRole=null;videoPendingCandidates=[];videoCandidateListener=null;videoAnswerListener=null;videoCallStateListener=null;videoIncomingStateListener=null;videoIncomingData=null;videoMuted=false;videoCameraOff=false;videoFacingMode="user";videoChatMessageId=null;videoChatId=null;videoCallAnswered=false;videoCallStartedAt=0;
+ if(navigator.vibrate)navigator.vibrate(0);
+ $("videoCallLayer")?.classList.remove("show");
+ if($("videoCallKicker"))$("videoCallKicker").textContent="VISCHAT • VIDEO CALL";
+ if($("videoEndLabel"))$("videoEndLabel").textContent="Akhiri";
+ if($("videoAcceptBtn"))$("videoAcceptBtn").style.display="none";
+ if($("videoMuteBtn")){ $("videoMuteBtn").style.display="";$("videoMuteBtn").innerHTML='<span class="material-symbols-rounded">mic</span><span>Mute</span>'; }
+ if($("videoCameraBtn")){ $("videoCameraBtn").style.display="";$("videoCameraBtn").innerHTML='<span class="material-symbols-rounded">videocam</span><span>Kamera</span>'; }
+ if($("videoSwitchBtn"))$("videoSwitchBtn").style.display="";
+}
+
+/* =====================================================
+BACK
+===================================================== */
+
+window.addEventListener("popstate",()=>{
+
+if(appLocked){
+history.pushState(null,"",location.href);
+return;
+}
+
+if($("memberActionLayer").classList.contains("show")){
+closeMemberAction();
+return;
+}
+
+if($("groupInfoModal").classList.contains("show")){
+closeModal("groupInfoModal");
+return;
+}
+
+if($("groupCreateModal").classList.contains("show")){
+closeModal("groupCreateModal");
+return;
+}
+
+if($("groupAddModal").classList.contains("show")){
+closeModal("groupAddModal");
+return;
+}
+if($("storyCreateModal").classList.contains("show")){
+closeModal("storyCreateModal");return;
+}
+if($("storyViewer").classList.contains("show")){
+closeStoryViewer();return;
+}
+
+if($("chatView").style.display==="flex"){
+closeChat();
+}
+});
+
+history.pushState(null,"",location.href);
+
+startup();
+
+</script>
+</body>
+</html>
